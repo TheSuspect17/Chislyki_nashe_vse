@@ -4,16 +4,14 @@ import sympy
 def schit(): 
     while True:
         m = input(f'Введите число строк матрицы: ')
+        n = input('Введите число столбцов матрицы: ')
         if not m.isdigit():
             print("Вы ввели некорректное число строк, повторите попытку: ")
-        else:
-            break
-    while True:
-        n = input('Введите число столбцов матрицы: ')
         if not n.isdigit():
             print("Вы ввели некорректное число столбцов, повторите попытку: ")
         else:
             break
+            
     m = int(m)
     n = int(n)
     while True:
