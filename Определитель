@@ -1,3 +1,9 @@
+import numpy as np
+from numpy import linalg as LA
+import copy
+import time
+
+
 def opredelitel(matrix,mult):
     porydok_matrix = len(matrix)
     if porydok_matrix == 1:
@@ -17,3 +23,47 @@ def opredelitel(matrix,mult):
         sign *= -1
         sum += mult * opredelitel(minor, sign * matrix[0][i])
     return sum
+
+
+while True:
+    m = input('Введите число строк матрицы: ')
+    if not m.isdigit():
+        print("Вы ввели некорректное число строк, повторите попытку: ")
+    else:
+        break
+while True:
+    n = input('Введите число столбцов матрицы: ')
+    if not n.isdigit():
+        print("Вы ввели некорректное число столбцов, повторите попытку: ")
+    else:
+        break
+m = int(m)
+n = int(n)
+while True:
+    if m <0:
+        m = int(input('Вы ввели некорректное число строк, повторите попытку: '))
+    if n<0:
+        n = int(input('Вы ввели некорректное число столбцов, повторите попытку: '))
+    if n == 0 and m != 0 or m == 0 and n!=0:
+        print('Данной матрицы не существует, клоун')
+        m = int(input('Введите корректное число строк: '))
+        n = int(input('Введите корректное число столбцов: '))
+        break
+    else:
+        break
+
+mtrx = [[0 for j in range(n)]for i in range (m)]
+
+for i in range (m):
+    for j in range (n):
+        k = input(f'Введите значение ячейки а{i}{j}:')
+        mtrx[i][j] = complex(k)
+start_time = time.perf_counter()       
+print(opredelitel(mtrx,1))
+stop_time = time.perf_counter()       
+print(stop_time - start_time, 'seconds')
+
+start_time = time.perf_counter()     
+print(np.linalg.det(mtrx))
+stop_time = time.perf_counter()    
+print(stop_time - start_time, 'seconds')
