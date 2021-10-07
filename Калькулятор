@@ -58,7 +58,7 @@ def mult_by_count(mtrx_1, k):
     tmp_mtrx = [[0 for j in range(len(mtrx_1))]for i in range (len(mtrx_1[0]))]
     for i in range (len(mtrx_1)):
         for j in range (len(mtrx_1[0])):
-            k = complex(k)
+            k = float(k)
             t = complex(mtrx_1[i][j])
             tmp_mtrx[i][j] = t*k
 def mult(mtrx_1, mtrx_2):
