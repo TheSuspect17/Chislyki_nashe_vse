@@ -187,7 +187,7 @@ while True:
             print('Введите 1 матрицу: ')
             mtrx_1 = schit()
         else:
-            mtrx_1 = B1
+            mtrx_1 = B
         print('Введите 2 матрицу: ')
         mtrx_2 = schit()
         print('Получаем: ')
