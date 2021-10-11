@@ -1,2 +1,3 @@
 # Chislyki_nashe_vse
-import matrix 
+from matrix import * 
+print(matrix(1,2))
