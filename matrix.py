@@ -58,17 +58,34 @@ def matrix(m,n):
 # Возвращает матрицу m x n
 # Ввод элементов с клавиатуры
 
-def determinant(matr):
-    size = len(matr)
-    if size == 1:
-        return matr[0][0]
-    for k in range(size):
-        t = [ row[:k] + row[k+1:] for row in (matr[1:])]
-        matr[0][k] = matr[0][k] * (-1)**(k) * determinant(t)
-    return sum(matr[0])
+def minor(matrix, i,j):
+    minor = []
+    for q in (matrix[:i] + matrix[i+1:]):
+        _ = q[:j]+q[j+1:]
+        minor.append(_)
+    return minor
 
-# .determinant(matr = matrix)
-# Возвращает определитель matrix
+def det2(matrix):
+    return matrix[0][0]*matrix[1][1]-matrix[1][0]*matrix[0][1]
+
+def alg_dop(matrix,somme=None,prod=1):
+    if(somme==None):
+        somme=[]
+    if(len(matrix)==1):
+        somme.append(matrix[0][0])
+    elif (len(matrix) == 2):
+        somme.append(det2(matrix) * prod)
+    else:
+        for index, elmt in enumerate(matrix[0]):
+            transposee = [list(a) for a in zip(*matrix[1:])]
+            del transposee[index]
+            mineur = [list(a) for a in zip(*transposee)]
+            somme = alg_dop(mineur,somme,prod*matrix[0][index]*(-1)**(index+2))
+    return somme
+
+
+def determinant(matrix):
+    return sum(alg_dop(matrix))
 
 
 def sum_matrix(mtrx_1, mtrx_2):
@@ -91,6 +108,7 @@ def subtraction_matrix(mtrx_1, mtrx_2):
     return tmp_mtrx
 
 
+
 def mult_by_count_matrix(mtrx_1, k):
     tmp_mtrx = [[0 for j in range(len(mtrx_1))] for i in range(len(mtrx_1[0]))]
     for i in range(len(mtrx_1)):
@@ -98,6 +116,7 @@ def mult_by_count_matrix(mtrx_1, k):
             k = type_conversion(k)
             t = type_conversion(mtrx_1[i][j])
             tmp_mtrx[i][j] = t * k
+    return tmp_mtrx
 
 def multiply_matrix(mtrx_1, mtrx_2):
     s = 0
@@ -116,5 +135,68 @@ def multiply_matrix(mtrx_1, mtrx_2):
         t = []
     return m3
     return tmp_mtrx
+
+
+
+
+def single_variable(row,index): #выражение элемента в виде xi = (- a1x1 - a2x2 ... - a(i-1)x(i-1) - a(i+1)x(i+1) ... + с )/ai
+    return ([(-i/row[index]) for i in (row[:index] + row[index+1:-1]) ] + [row[-1]/row[index]])
+
+
+
+def method_Jacobi(matrix):
+    eps = float(input('Введите погрешность: '))
+    interm =  [0] * (len(matrix)) + [1]
+    variables = [0] * len(matrix)
+    k = -1
+    interm_2 =  [0] * (len(matrix)) + [1]
+    while k != 0:
+        k = 0
+        for i in range(len(matrix)):
+            variables[i] = single_variable(matrix[i], i)
+            for j in range(len(matrix)):
+                ne_eby = (interm[:i ] + interm[i + 1:])
+                interm_2[i] += variables[i][j] * ne_eby[j]
+            if abs(interm[i] - interm_2[i]) > eps:
+                k += 1
+        interm = interm_2
+        interm_2 =  [0] * (len(matrix)) + [1]
+        print(interm[:-1])
+        print(k)
+        print('____')
+    return interm[:-1]
+
+
+def norma(matrix):
+    norma_matrix = []
+    for i in range(len(matrix)):
+        summa = 0
+        for j in range(len(matrix)):
+            summa += abs(matrix[i][j])
+        norma_matrix.append(summa)
+    return max(norma_matrix)
+
+
+
+
+
+
+def reverse_matrix(matrix):
+    deter = determinant(matrix)
+    try:
+        a = 1/deter
+    except ZeroDivisionError:
+        return 'Быдло'
+    matr_dop = [[0]*len(matrix) for i in range(len(matrix))]
+    for i in range(len(matrix)):
+        for j in range(len(matrix)):
+            matr_dop[i][j] = (-1)**(i+j)*determinant(minor(matrix,i,j))
+    matr_dop_T = matrixTranspose(matr_dop)
+    return mult_by_count_matrix(matr_dop_T,a)
+
+
+def cond(matrix):
+    return (norma(matrix)*norma(reverse_matrix(matrix)))
+
 
 
