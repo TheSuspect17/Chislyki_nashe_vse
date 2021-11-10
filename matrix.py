@@ -1,3 +1,4 @@
+from random import uniform, randint
 def is_number(str):
     try:
         float(str)
@@ -8,6 +9,14 @@ def is_number(str):
             return True
         except ValueError:
             return False
+    except TypeError:
+        try:
+            complex(str)
+            return True
+        except TypeError:
+            return False
+
+
 # .is_number ( str = string )
 # return: TRUE если str может быть преобразован к типу complex или float
 
@@ -19,10 +28,19 @@ def type_conversion(str): #преобразование типов
         complex(str)
         return complex(str)
 
+
 # .type_conversion(str = string)
 # Возвращает float(str), при ошибке типа ValueError complex(str)
 
-def matrix(m,n):
+def matrixTranspose(anArray):
+    transposed = [None]*len(anArray[0])
+    for t in range(len(anArray)):
+        transposed[t] = [None]*len(anArray)
+        for tt in range(len(anArray[t])):
+            transposed[t][tt] = anArray[tt][t]
+    return transposed
+
+def matrix(random = 0, float_random = 0, a = 1, b = 100):
     m = input('Введите количество строк: ')
 
     while m.isdigit() != 1:
@@ -37,34 +55,39 @@ def matrix(m,n):
     m = int(m)
     n = int(n)
     matr = []
-    for i in range(m):
-        t = []
-        for j in range(n):
-            _ = input(f'Введите элемент {i + 1} строки {j + 1} столбца: ')
-            while is_number(_) != 1:
-                print("Неверный формат ввода")
+    if random == 0:
+        for i in range(m):
+            t = []
+            for j in range(n):
                 _ = input(f'Введите элемент {i + 1} строки {j + 1} столбца: ')
-            try:
-                t.append(float(_))
-            except ValueError:
+                while is_number(_) != 1:
+                    print("Неверный формат ввода")
+                    _ = input(f'Введите элемент {i + 1} строки {j + 1} столбца: ')
                 try:
-                    t.append(complex(_))
+                    t.append(float(_))
                 except ValueError:
-                    None
-        matr.append(t)
+                    try:
+                        t.append(complex(_))
+                    except ValueError:
+                        None
+            matr.append(t)
+    else:
+        for i in range(m):
+            t = []
+            for j in range(n):
+                if float_random == 1:
+                    _ = uniform(a,b)
+                    t.append(_)
+                else:
+                    _ = randint(a,b)
+                    t.append(_)
+            matr.append(t)
+
     return matr
 
 #.matrix ( m = int, n = int)
 # Возвращает матрицу m x n
 # Ввод элементов с клавиатуры
-
-def minor(matrix, i,j):
-    minor = []
-    for q in (matrix[:i] + matrix[i+1:]):
-        _ = q[:j]+q[j+1:]
-        minor.append(_)
-    return minor
-
 def det2(matrix):
     return matrix[0][0]*matrix[1][1]-matrix[1][0]*matrix[0][1]
 
@@ -87,6 +110,9 @@ def alg_dop(matrix,somme=None,prod=1):
 def determinant(matrix):
     return sum(alg_dop(matrix))
 
+# .determinant(matr = matrix)
+# Возвращает определитель matrix
+
 
 def sum_matrix(mtrx_1, mtrx_2):
     tmp_mtrx = [[0 for j in range(len(mtrx_1))] for i in range(len(mtrx_1[0]))]
@@ -98,6 +124,17 @@ def sum_matrix(mtrx_1, mtrx_2):
     return tmp_mtrx
 
 
+
+def minor(matrix, i,j):
+    minor = []
+    for q in (matrix[:i] + matrix[i+1:]):
+        _ = q[:j]+q[j+1:]
+        minor.append(_)
+    return minor
+
+
+
+
 def subtraction_matrix(mtrx_1, mtrx_2):
     tmp_mtrx = [[0 for j in range(len(mtrx_1))] for i in range(len(mtrx_1[0]))]
     for i in range(len(mtrx_1)):
@@ -106,7 +143,6 @@ def subtraction_matrix(mtrx_1, mtrx_2):
             m = type_conversion(mtrx_2[i][j])
             tmp_mtrx[i][j] = t - m
     return tmp_mtrx
-
 
 
 def mult_by_count_matrix(mtrx_1, k):
@@ -138,14 +174,14 @@ def multiply_matrix(mtrx_1, mtrx_2):
 
 
 
-
 def single_variable(row,index): #выражение элемента в виде xi = (- a1x1 - a2x2 ... - a(i-1)x(i-1) - a(i+1)x(i+1) ... + с )/ai
     return ([(-i/row[index]) for i in (row[:index] + row[index+1:-1]) ] + [row[-1]/row[index]])
 
-
-
-def method_Jacobi(matrix):
+def method_Jacobi(a,b):
     eps = float(input('Введите погрешность: '))
+    matrix = []
+    for j in range(len(b)):
+        matrix.append([a[j]+b[j]])
     interm =  [0] * (len(matrix)) + [1]
     variables = [0] * len(matrix)
     k = -1
@@ -161,11 +197,10 @@ def method_Jacobi(matrix):
                 k += 1
         interm = interm_2
         interm_2 =  [0] * (len(matrix)) + [1]
-        print(interm[:-1])
-        print(k)
-        print('____')
+        #print(interm[:-1])
+        #print(k)
+        #print('____')
     return interm[:-1]
-
 
 def norma(matrix):
     norma_matrix = []
@@ -175,9 +210,6 @@ def norma(matrix):
             summa += abs(matrix[i][j])
         norma_matrix.append(summa)
     return max(norma_matrix)
-
-
-
 
 
 
@@ -197,6 +229,3 @@ def reverse_matrix(matrix):
 
 def cond(matrix):
     return (norma(matrix)*norma(reverse_matrix(matrix)))
-
-
-
