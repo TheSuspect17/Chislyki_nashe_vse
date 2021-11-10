@@ -181,7 +181,7 @@ def method_Jacobi(a,b):
     eps = float(input('Введите погрешность: '))
     matrix = []
     for j in range(len(b)):
-        matrix.append([a[j]+b[j]])
+        matrix.append(a[j]+b[j])
     interm =  [0] * (len(matrix)) + [1]
     variables = [0] * len(matrix)
     k = -1
