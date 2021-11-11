@@ -203,7 +203,7 @@ def reverse_matrix(matrix):
     try:
         a = 1/deter
     except ZeroDivisionError:
-        return 'Быдло'
+        return 'Нулевой определитель'
     matr_dop = [[0]*len(matrix) for i in range(len(matrix))]
     for i in range(len(matrix)):
         for j in range(len(matrix)):
@@ -234,8 +234,8 @@ def method_Jacobi(a,b):
         for i in range(len(matrix)):
             variables[i] = single_variable(matrix[i], i)
             for j in range(len(matrix)):
-                ne_eby = (interm[:i ] + interm[i + 1:])
-                interm_2[i] += variables[i][j] * ne_eby[j]
+                ne_know = (interm[:i ] + interm[i + 1:])
+                interm_2[i] += variables[i][j] * ne_know[j]
             if abs(interm[i] - interm_2[i]) > eps:
                 k += 1
         interm = interm_2
@@ -313,7 +313,7 @@ def frkgssjrdn(a, b):
     for i in range(n):
         for j in range(n):
             a[i, j] = Fraction(a[i, j])
-            b[i] = Fraction(b[i])
+            b[i] = Fraction(*b[i])
 
     matrix = []
     for j in range(n):
