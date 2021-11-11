@@ -231,7 +231,7 @@ def reverse_matrix(matrix):
     return mult_by_count_matrix(matr_dop_T,a)
 
 
-def cond(matrix):
+def cord(matrix):
     return (norma(matrix)*norma(reverse_matrix(matrix)))
 
 def pick_nonzero_row(m, k):
