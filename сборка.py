@@ -11,6 +11,7 @@ for j in range(len(vector_c)):
 input_Jacobi = method_Jacobi(matrix_сoef,vector_c)
 input_Gauss = gssjrdn(matrix_сoef,vector_c)
 input_Gauss_fr = frkgssjrdn(matrix_сoef,vector_c)
+print('Метод Якоби: ')
 print('Введенная матрица: ')
 print('\n')
 print(*matrix_added, sep='\n')
