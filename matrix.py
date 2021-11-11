@@ -3,6 +3,12 @@ from fractions import Fraction
 import numpy as np
 
 
+
+
+
+
+
+
 def is_number(str):
     try:
         float(str)
@@ -50,7 +56,6 @@ def matrix(random = 0, float_random = 0, a = 1, b = 100):
     while m.isdigit() != 1:
         print("Неверный формат ввода")
         m = input('Введите количество строк: ')
-
     n = input('Введите количество столбцов: ')
 
     while n.isdigit() != 1:
@@ -181,30 +186,6 @@ def multiply_matrix(mtrx_1, mtrx_2):
 def single_variable(row,index): #выражение элемента в виде xi = (- a1x1 - a2x2 ... - a(i-1)x(i-1) - a(i+1)x(i+1) ... + с )/ai
     return ([(-i/row[index]) for i in (row[:index] + row[index+1:-1]) ] + [row[-1]/row[index]])
 
-def method_Jacobi(a,b):
-    eps = float(input('Введите погрешность: '))
-    matrix = []
-    for j in range(len(b)):
-        matrix.append(a[j]+b[j])
-    interm =  [0] * (len(matrix)) + [1]
-    variables = [0] * len(matrix)
-    k = -1
-    interm_2 =  [0] * (len(matrix)) + [1]
-    while k != 0:
-        k = 0
-        for i in range(len(matrix)):
-            variables[i] = single_variable(matrix[i], i)
-            for j in range(len(matrix)):
-                ne_eby = (interm[:i ] + interm[i + 1:])
-                interm_2[i] += variables[i][j] * ne_eby[j]
-            if abs(interm[i] - interm_2[i]) > eps:
-                k += 1
-        interm = interm_2
-        interm_2 =  [0] * (len(matrix)) + [1]
-        #print(interm[:-1])
-        #print(k)
-        #print('____')
-    return interm[:-1]
 
 def norma(matrix):
     norma_matrix = []
@@ -231,25 +212,60 @@ def reverse_matrix(matrix):
     return mult_by_count_matrix(matr_dop_T,a)
 
 
+
 def cord(matrix):
     return (norma(matrix)*norma(reverse_matrix(matrix)))
+
+
+
+
+def method_Jacobi(a,b):
+    eps = float(input('Введите погрешность для метода Якоби: '))
+    matrix = []
+    for j in range(len(b)):
+        matrix.append(a[j]+b[j])
+    interm =  [0] * (len(matrix)) + [1]
+    variables = [0] * len(matrix)
+    k = -1
+    interm_2 =  [0] * (len(matrix)) + [1]
+    count = 0
+    while k != 0:
+        k = 0
+        for i in range(len(matrix)):
+            variables[i] = single_variable(matrix[i], i)
+            for j in range(len(matrix)):
+                ne_eby = (interm[:i ] + interm[i + 1:])
+                interm_2[i] += variables[i][j] * ne_eby[j]
+            if abs(interm[i] - interm_2[i]) > eps:
+                k += 1
+        interm = interm_2
+        interm_2 =  [0] * (len(matrix)) + [1]
+        #print(interm[:-1])
+        #print(k)
+        #print('____')
+        count += 1
+        if count == 1000:
+            return (['Метод Якоби не сработал']*3)
+    return (a,reverse_matrix(a),interm[:-1])
+
 
 def pick_nonzero_row(m, k):
     while k < m.shape[0] and not m[k, k]:
         k += 1
     return k
 
+
 def gssjrdn(a, b):
     nc = []
-    for i in range (len(a)):
+    for i in range(len(a)):
         nc.append(a[i])
     a = np.array(a, float)
     b = np.array(b, float)
     n = len(b)
     st = a
-    
-    m = np.hstack((st, 
-                np.matrix(np.diag([1.0 for i in range(st.shape[0])]))))
+
+    m = np.hstack((st,
+                   np.matrix(np.diag([1.0 for i in range(st.shape[0])]))))
     for k in range(n):
         swap_row = pick_nonzero_row(m, k)
         if swap_row != k:
@@ -262,70 +278,71 @@ def gssjrdn(a, b):
         for row in range(k - 1, -1, -1):
             if m[row, k]:
                 m[row, :] -= m[k, :] * m[row, k]
-                
+
     for k in range(n):
-        if np.fabs(a[k,k]) < 1.0e-12:
-            for i in range(k+1,n):
-                if np.fabs(a[i,k]) > np.fabs(a[k,k]):
-                    for j in range (k,n):
-                        a[k,j], a[i,j] = a[i,j], a[k,j]
+        if np.fabs(a[k, k]) < 1.0e-12:
+            for i in range(k + 1, n):
+                if np.fabs(a[i, k]) > np.fabs(a[k, k]):
+                    for j in range(k, n):
+                        a[k, j], a[i, j] = a[i, j], a[k, j]
                     b[k], b[i] = b[i], b[k]
                     break
-        pivot = a[k,k]
-        for j in range (k,n):
-            a[k,j] /= pivot
-        b[k] /=pivot
+        pivot = a[k, k]
+        for j in range(k, n):
+            a[k, j] /= pivot
+        b[k] /= pivot
         for i in range(n):
-            if i == k or a[i,k] ==0: 
+            if i == k or a[i, k] == 0:
                 continue
-            factor = a[i,k]
-            for j in range (k,n):
-                a[i,j] -= factor * a[k,j]
+            factor = a[i, k]
+            for j in range(k, n):
+                a[i, j] -= factor * a[k, j]
             b[i] -= factor * b[k]
-      
-    return nc, np.hsplit(m, n // 2)[1], b
+
+    return nc, np.hsplit(m, n // 2)[0], b
+
 
 def frkgssjrdn(a, b):
     nc = []
-    for i in range (len(a)):
+    for i in range(len(a)):
         nc.append(a[i])
     a = np.array(a, float)
     b = np.array(b, float)
     n = len(b)
-    
-    for i in range (n):
+
+    for i in range(n):
         for j in range(n):
-            a[i,j] = Fraction(a[i,j])
+            a[i, j] = Fraction(a[i, j])
             b[i] = Fraction(b[i])
-    
+
     matrix = []
     for j in range(n):
-        matrix.append(a[j]+b[j])
+        matrix.append(a[j] + b[j])
     matrix = np.array(matrix, float)
-    matrix[i,j] = Fraction(matrix[i,j])
-    
+    matrix[i, j] = Fraction(matrix[i, j])
+
     for k in range(n):
-        if np.fabs(a[k,k]) < 1.0e-12:
-            for i in range(k+1,n):
-                if np.fabs(a[i,k]) > np.fabs(a[k,k]):
-                    for j in range (k,n):
-                        a[k,j], a[i,j] = a[i,j], a[k,j]
+        if np.fabs(a[k, k]) < 1.0e-12:
+            for i in range(k + 1, n):
+                if np.fabs(a[i, k]) > np.fabs(a[k, k]):
+                    for j in range(k, n):
+                        a[k, j], a[i, j] = a[i, j], a[k, j]
                     b[k], b[i] = b[i], b[k]
                     break
-        pivot = a[k,k]
-        for j in range (k,n):
-            a[k,j] /= pivot
-        b[k] /=pivot
+        pivot = a[k, k]
+        for j in range(k, n):
+            a[k, j] /= pivot
+        b[k] /= pivot
         for i in range(n):
-            if i == k or a[i,k] ==0: 
+            if i == k or a[i, k] == 0:
                 continue
-            factor = a[i,k]
-            for j in range (k,n):
-                a[i,j] -= factor * a[k,j]
+            factor = a[i, k]
+            for j in range(k, n):
+                a[i, j] -= factor * a[k, j]
             b[i] -= factor * b[k]
-            
-    m = np.hstack((matrix, 
-                np.matrix(np.diag([1.0 for i in range(matrix.shape[0])]))))
+
+    m = np.hstack((matrix,
+                   np.matrix(np.diag([1.0 for i in range(matrix.shape[0])]))))
     for k in range(n):
         swap_row = pick_nonzero_row(m, k)
         if swap_row != k:
@@ -338,4 +355,4 @@ def frkgssjrdn(a, b):
         for row in range(k - 1, -1, -1):
             if m[row, k]:
                 m[row, :] -= m[k, :] * m[row, k]
-    return nc, np.hsplit(m, n // 2)[1],b       
+    return nc, np.hsplit(m, n // 2)[0], b
