@@ -46,13 +46,8 @@ def newton_there(x_array, y_array):
     print('Коэффициенты прямого полинома')
     print(part_y)
     x = np.linspace(x_array[0], x_array[len(x_array) - 1], 228)
-    plt.plot(x, tragic_magic(part_y, x, x_array))
-    plt.xlabel('X')
-    plt.ylabel('Y')
-    plt.grid(True)
-    plt.axhline(y=0, color='k')
-    plt.axvline(x=0, color='k')
-    plt.show()
+    return (x,y, tragic_magic(part_y, x, x_array))
+    
 
 def witchcraft_continue(y_array, h):
     part_y = [y_array[len(y_array) - 1]]
