@@ -1,0 +1,13 @@
+import numpy as np
+import random
+import math
+
+x = list(np.arange(-10,10,2))
+y = []
+for i in range (len(x)):
+    y.append(math.sin(x[i]))
+    y[i] += random.randint(-1, 1) * 0.1 * y[i]
+for i in range (len(x)):
+    print(f'{x[i]},')
+for i in range (len(x)):
+    print(f'{y[i]},')
