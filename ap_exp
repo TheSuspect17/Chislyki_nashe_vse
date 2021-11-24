@@ -24,7 +24,8 @@ def ap_exp(x,y_real):
 
     plsq = leastsq(res, p, args = (y_real, x))
     y_est = norm(x, plsq[0][0], plsq[0][2]) + norm(x, plsq[0][0] + plsq[0][1], plsq[0][3])
+    gamma = 0
     for i in range(len(x)):
-        gamma += (y[i]-y_init[i])**2
+        gamma += (y_real[i]-y_init[i])**2
         output = [[x[i]]+[y_real[i]]+[y_init[i]] for i in range(len(x))]
     return (output, gamma)
