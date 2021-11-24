@@ -1,0 +1,104 @@
+from matrix import *
+import matplotlib.pyplot as plt
+import csv
+from sympy import lambdify, symbols
+
+with open("d://input_inter.csv") as r_file:
+    file_reader = csv.reader(r_file, delimiter=";")
+    x = []
+    y = []
+    for row in file_reader:
+        x.append(round(type_conversion(row[0].replace(',', '.')), 5))
+        y.append(round(type_conversion(row[1].replace(',', '.')), 5))
+
+# Метод Лагранжа
+_ = lagranz(x, y)
+method_lagranza = _[0]
+polinom = _[1]
+t = symbols('t')
+f_polinom = lambdify(t, polinom)
+f_lagranz = []
+x_lagranz = []
+for i in range(int(min(x) * 10), int(max(x) * 10)):
+    x_lagranz.append(i / 10)
+    f_lagranz.append(f_polinom(i / 10))
+
+
+
+
+plt.plot(x, y, 'b', label="Исходные точки")
+plt.plot(x_lagranz, f_lagranz, 'r', label=f'Интерполированная функция')
+
+plt.title("Интерполяция методом Лагранжа ")
+plt.legend(loc='best', prop={'size': 8}, frameon = False)
+
+plt.show()
+
+
+# Интерполяция методом кубического сплайна
+
+
+splines = BuildSpline(x,y)
+f_splines = []
+x_splines = []
+for i in range(int(min(x) * 10), int(max(x) * 10)):
+    x_splines.append(i / 10)
+    f_splines.append(Interpolate(splines, i / 10))
+
+
+plt.plot(x, y, 'b', label="Исходные точки")
+plt.plot(x_splines, f_splines, 'r', label=f'Интерполированная функция')
+
+plt.title("Интерполяция методом кубического сплайна ")
+plt.legend(loc='best', prop={'size': 8}, frameon = False)
+
+plt.show()
+
+
+#Аппроксимация линейной функцией
+
+noname = method_lin(x,y)
+
+straight = noname[1]
+_ = noname[0]
+gamma = round(noname[2],3)
+x_lin = []
+f_lin = []
+for i in range(len(x)):
+    x_lin.append(_[i][0])
+    f_lin.append(_[i][2])
+
+
+plt.plot(x, y, 'b', label="Исходные точки")
+plt.plot(x_lin, f_lin, 'r', label=f'Интерполированная функция c G = {gamma}')
+
+plt.title("Аппроксимация линейной функцией")
+plt.legend(loc='best', prop={'size': 8}, frameon = False)
+
+plt.show()
+
+# Аппрокисмация квардратичной функцией
+
+noname = method_min_square(x,y)
+straight = noname[1]
+_ = noname[0]
+gamma = round(noname[2],3)
+x_square = []
+f_square = []
+for i in range(len(x)):
+    x_square.append(_[i][0])
+    f_square.append(_[i][2])
+
+
+plt.plot(x, y, 'b', label="Исходные точки")
+plt.plot(x_square, f_square, 'r', label=f'Интерполированная функция c G = {gamma}')
+
+plt.title("Аппрокисмация квардратичной функцией ")
+plt.ylabel(u'Функция')
+plt.legend(loc='best', prop={'size': 8}, frameon = False)
+
+
+# Аппрокисмация логарифмом
+
+
+plt.show()
