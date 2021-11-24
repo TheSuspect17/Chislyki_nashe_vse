@@ -1,12 +1,10 @@
 from random import uniform, randint
 from fractions import Fraction
 import numpy as np
-
-
-
-
-
-
+from scipy.optimize import leastsq
+from sympy import symbols, expand, lambdify
+import numpy as np
+import random
 
 
 def is_number(str):
@@ -30,7 +28,7 @@ def is_number(str):
 # .is_number ( str = string )
 # return: TRUE если str может быть преобразован к типу complex или float
 
-def type_conversion(str): #преобразование типов
+def type_conversion(str):  # преобразование типов
     try:
         float(str)
         return float(str)
@@ -43,14 +41,15 @@ def type_conversion(str): #преобразование типов
 # Возвращает float(str), при ошибке типа ValueError complex(str)
 
 def matrixTranspose(anArray):
-    transposed = [None]*len(anArray[0])
+    transposed = [None] * len(anArray[0])
     for t in range(len(anArray)):
-        transposed[t] = [None]*len(anArray)
+        transposed[t] = [None] * len(anArray)
         for tt in range(len(anArray[t])):
             transposed[t][tt] = anArray[tt][t]
     return transposed
 
-def matrix(random = 0, float_random = 0, a = 1, b = 100):
+
+def matrix(random=0, float_random=0, a=1, b=100):
     m = input('Введите количество строк: ')
 
     while m.isdigit() != 1:
@@ -85,25 +84,27 @@ def matrix(random = 0, float_random = 0, a = 1, b = 100):
             t = []
             for j in range(n):
                 if float_random == 1:
-                    _ = uniform(a,b)
+                    _ = uniform(a, b)
                     t.append(_)
                 else:
-                    _ = randint(a,b)
+                    _ = randint(a, b)
                     t.append(_)
             matr.append(t)
 
     return matr
 
-#.matrix ( m = int, n = int)
+
+# .matrix ( m = int, n = int)
 # Возвращает матрицу m x n
 # Ввод элементов с клавиатуры
 def det2(matrix):
-    return matrix[0][0]*matrix[1][1]-matrix[1][0]*matrix[0][1]
+    return matrix[0][0] * matrix[1][1] - matrix[1][0] * matrix[0][1]
 
-def alg_dop(matrix,somme=None,prod=1):
-    if(somme==None):
-        somme=[]
-    if(len(matrix)==1):
+
+def alg_dop(matrix, somme=None, prod=1):
+    if (somme == None):
+        somme = []
+    if (len(matrix) == 1):
         somme.append(matrix[0][0])
     elif (len(matrix) == 2):
         somme.append(det2(matrix) * prod)
@@ -112,12 +113,13 @@ def alg_dop(matrix,somme=None,prod=1):
             transposee = [list(a) for a in zip(*matrix[1:])]
             del transposee[index]
             mineur = [list(a) for a in zip(*transposee)]
-            somme = alg_dop(mineur,somme,prod*matrix[0][index]*(-1)**(index+2))
+            somme = alg_dop(mineur, somme, prod * matrix[0][index] * (-1) ** (index + 2))
     return somme
 
 
 def determinant(matrix):
     return sum(alg_dop(matrix))
+
 
 # .determinant(matr = matrix)
 # Возвращает определитель matrix
@@ -133,15 +135,12 @@ def sum_matrix(mtrx_1, mtrx_2):
     return tmp_mtrx
 
 
-
-def minor(matrix, i,j):
+def minor(matrix, i, j):
     minor = []
-    for q in (matrix[:i] + matrix[i+1:]):
-        _ = q[:j]+q[j+1:]
+    for q in (matrix[:i] + matrix[i + 1:]):
+        _ = q[:j] + q[j + 1:]
         minor.append(_)
     return minor
-
-
 
 
 def subtraction_matrix(mtrx_1, mtrx_2):
@@ -163,6 +162,7 @@ def mult_by_count_matrix(mtrx_1, k):
             tmp_mtrx[i][j] = t * k
     return tmp_mtrx
 
+
 def multiply_matrix(mtrx_1, mtrx_2):
     s = 0
     t = []
@@ -182,9 +182,9 @@ def multiply_matrix(mtrx_1, mtrx_2):
     return tmp_mtrx
 
 
-
-def single_variable(row,index): #выражение элемента в виде xi = (- a1x1 - a2x2 ... - a(i-1)x(i-1) - a(i+1)x(i+1) ... + с )/ai
-    return ([(-i/row[index]) for i in (row[:index] + row[index+1:-1]) ] + [row[-1]/row[index]])
+def single_variable(row,
+                    index):  # выражение элемента в виде xi = (- a1x1 - a2x2 ... - a(i-1)x(i-1) - a(i+1)x(i+1) ... + с )/ai
+    return ([(-i / row[index]) for i in (row[:index] + row[index + 1:-1])] + [row[-1] / row[index]])
 
 
 def norma(matrix):
@@ -197,56 +197,52 @@ def norma(matrix):
     return max(norma_matrix)
 
 
-
 def reverse_matrix(matrix):
     deter = determinant(matrix)
     try:
-        a = 1/deter
+        a = 1 / deter
     except ZeroDivisionError:
         return 'Нулевой определитель'
-    matr_dop = [[0]*len(matrix) for i in range(len(matrix))]
+    matr_dop = [[0] * len(matrix) for i in range(len(matrix))]
     for i in range(len(matrix)):
         for j in range(len(matrix)):
-            matr_dop[i][j] = (-1)**(i+j)*determinant(minor(matrix,i,j))
+            matr_dop[i][j] = (-1) ** (i + j) * determinant(minor(matrix, i, j))
     matr_dop_T = matrixTranspose(matr_dop)
-    return mult_by_count_matrix(matr_dop_T,a)
-
+    return mult_by_count_matrix(matr_dop_T, a)
 
 
 def cord(matrix):
-    return (norma(matrix)*norma(reverse_matrix(matrix)))
+    return (norma(matrix) * norma(reverse_matrix(matrix)))
 
 
-
-
-def method_Jacobi(a,b):
+def method_Jacobi(a, b):
     eps = float(input('Введите погрешность для метода Якоби: '))
     matrix = []
     for j in range(len(b)):
-        matrix.append(a[j]+b[j])
-    interm =  [0] * (len(matrix)) + [1]
+        matrix.append(a[j] + b[j])
+    interm = [0] * (len(matrix)) + [1]
     variables = [0] * len(matrix)
     k = -1
-    interm_2 =  [0] * (len(matrix)) + [1]
+    interm_2 = [0] * (len(matrix)) + [1]
     count = 0
     while k != 0:
         k = 0
         for i in range(len(matrix)):
             variables[i] = single_variable(matrix[i], i)
             for j in range(len(matrix)):
-                ne_know = (interm[:i ] + interm[i + 1:])
+                ne_know = (interm[:i] + interm[i + 1:])
                 interm_2[i] += variables[i][j] * ne_know[j]
             if abs(interm[i] - interm_2[i]) > eps:
                 k += 1
         interm = interm_2
-        interm_2 =  [0] * (len(matrix)) + [1]
-        #print(interm[:-1])
-        #print(k)
-        #print('____')
+        interm_2 = [0] * (len(matrix)) + [1]
+        # print(interm[:-1])
+        # print(k)
+        # print('____')
         count += 1
         if count == 1000:
-            return (['Метод Якоби не сработал']*3)
-    return (a,reverse_matrix(a),interm[:-1])
+            return (['Метод Якоби не сработал'] * 3)
+    return (a, reverse_matrix(a), interm[:-1])
 
 
 def pick_nonzero_row(m, k):
@@ -356,3 +352,226 @@ def frkgssjrdn(a, b):
             if m[row, k]:
                 m[row, :] -= m[k, :] * m[row, k]
     return nc, np.hsplit(m, n // 2)[0], b
+
+
+def method_lin(x, y):
+    x_1 = 0
+    x_2 = 0
+    x_3 = 0
+    x_4 = 0
+    x2_y = 0
+    x_y = 0
+    y_1 = 0
+    for i in range(len(x)):
+        x_1 += x[i]
+        x_2 += x[i] ** 2
+        x_3 += x[i] ** 3
+        x_4 += x[i] ** 4
+        x2_y += y[i] * x[i] ** 2
+        x_y += y[i] * x[i]
+        y_1 += y[i]
+    n = len(x)
+    a = [[x_2, x_3, x_4], [x_1, x_2, x_3], [n, x_1, x_2]]
+    b = [[x2_y], [x_y], [y_1]]
+    roots = gssjrdn(a, b)[2]
+    c = []
+    for i in range(2):
+        c.append(*roots[i])
+
+    def f_x(t):
+        return c[1] * t + c[0]
+
+    gamma = 0
+    f = []
+    for i in range(len(x)):
+        f.append(f_x(x[i]))
+        gamma += (y[i] - f[i]) ** 2
+    exp = ''
+    for i in [1, 0]:
+        if c[i] != 0:
+            exp += f'{c[i]}*t**{i} + '
+    exp = exp[:-2]
+    output = [[x[i]] + [y[i]] + [f[i]] for i in range(len(x))]
+    return (output, exp, gamma)
+
+
+def method_min_square(x, y):
+    x_1 = 0
+    x_2 = 0
+    x_3 = 0
+    x_4 = 0
+    x2_y = 0
+    x_y = 0
+    y_1 = 0
+    for i in range(len(x)):
+        x_1 += x[i]
+        x_2 += x[i] ** 2
+        x_3 += x[i] ** 3
+        x_4 += x[i] ** 4
+        x2_y += y[i] * x[i] ** 2
+        x_y += y[i] * x[i]
+        y_1 += y[i]
+    n = len(x)
+    a = [
+        [x_2, x_3, x_4],
+        [x_1, x_2, x_3],
+        [n, x_1, x_2]
+    ]
+    b = [
+        [x2_y],
+        [x_y],
+        [y_1]
+    ]
+    roots = gssjrdn(a, b)[2]
+    c = []
+    for i in range(3):
+        c.append(*roots[i])
+
+    def f_x(t):
+        return c[2] * t ** 2 + c[1] * t + c[0]
+
+    gamma = 0
+    f = []
+    for i in range(len(x)):
+        f.append(f_x(x[i]))
+        gamma += (y[i] - f[i]) ** 2
+    exp = ''
+    for i in [2, 1, 0]:
+        if c[i] != 0:
+            exp += f'{c[i]}*t**{i} + '
+    exp = exp[:-2]
+    output = [[x[i]] + [y[i]] + [f[i]] for i in range(len(x))]
+    return (output, exp, gamma)
+
+
+def lagranz(x, y):
+    t = symbols('t')
+    z = 0
+    for j in range(len(y)):
+        numerator = 1;
+        denominator = 1;
+        for i in range(len(x)):
+            if i == j:
+                numerator = numerator * 1;
+                denominator = denominator * 1
+            else:
+                numerator = expand(numerator * (t - x[i]))
+                denominator = denominator * (x[j] - x[i])
+        z = expand(z + y[j] * numerator / denominator)
+    f_x = lambdify(t, z)
+    output = []
+    for k in range(len(x)):
+        output.append([x[k], y[k], f_x(x[k])])
+    return (output, z)
+
+
+# Вывод в формате ([[x1,y1,f_x1]...[xi,yi,f_xi]], f_x)
+# f_x - строка, можно преобразовать в функцию типа f_x(x0) = y0
+
+class SplineTuple:
+    def __init__(self, a, b, c, d, x):
+        self.a = a
+        self.b = b
+        self.c = c
+        self.d = d
+        self.x = x
+
+
+# Построение сплайна
+# x - узлы сетки, должны быть упорядочены по возрастанию, кратные узлы запрещены
+# y - значения функции в узлах сетки
+# n - количество узлов сетки
+def BuildSpline(x, y):
+    # Инициализация массива сплайнов
+    n = len(x)
+    splines = [SplineTuple(0, 0, 0, 0, 0) for _ in range(0, n)]
+    for i in range(0, n):
+        splines[i].x = x[i]
+        splines[i].a = y[i]
+
+    splines[0].c = splines[n - 1].c = 0.0
+
+    # Решение СЛАУ относительно коэффициентов сплайнов c[i] методом прогонки для трехдиагональных матриц
+    # Вычисление прогоночных коэффициентов - прямой ход метода прогонки
+    alpha = [0.0 for _ in range(0, n - 1)]
+    beta = [0.0 for _ in range(0, n - 1)]
+
+    for i in range(1, n - 1):
+        hi = x[i] - x[i - 1]
+        hi1 = x[i + 1] - x[i]
+        A = hi
+        C = 2.0 * (hi + hi1)
+        B = hi1
+        F = 6.0 * ((y[i + 1] - y[i]) / hi1 - (y[i] - y[i - 1]) / hi)
+        z = (A * alpha[i - 1] + C)
+        alpha[i] = -B / z
+        beta[i] = (F - A * beta[i - 1]) / z
+
+    # Нахождение решения - обратный ход метода прогонки
+    for i in range(n - 2, 0, -1):
+        splines[i].c = alpha[i] * splines[i + 1].c + beta[i]
+
+    # По известным коэффициентам c[i] находим значения b[i] и d[i]
+    for i in range(n - 1, 0, -1):
+        hi = x[i] - x[i - 1]
+        splines[i].d = (splines[i].c - splines[i - 1].c) / hi
+        splines[i].b = hi * (2.0 * splines[i].c + splines[i - 1].c) / 6.0 + (y[i] - y[i - 1]) / hi
+    return splines
+
+
+# Вычисление значения интерполированной функции в произвольной точке
+def Interpolate(splines, x):
+    if not splines:
+        return None  # Если сплайны ещё не построены - возвращаем NaN
+
+    n = len(splines)
+    s = SplineTuple(0, 0, 0, 0, 0)
+
+    if x <= splines[0].x:  # Если x меньше точки сетки x[0] - пользуемся первым эл-тов массива
+        s = splines[0]
+    elif x >= splines[n - 1].x:  # Если x больше точки сетки x[n - 1] - пользуемся последним эл-том массива
+        s = splines[n - 1]
+    else:  # Иначе x лежит между граничными точками сетки - производим бинарный поиск нужного эл-та массива
+        i = 0
+        j = n - 1
+        while i + 1 < j:
+            k = i + (j - i) // 2
+            if x <= splines[k].x:
+                j = k
+            else:
+                i = k
+        s = splines[j]
+
+    dx = x - s.x
+    return s.a + (s.b + (s.c / 2.0 + s.d * dx / 6.0) * dx) * dx;
+
+
+def xWeightA(x):
+    container = []
+    for k in range(len(x)):
+        if k < int(0.9 * len(x)):
+            container.append(1)
+        else:
+            container.append(1.2)
+    return container
+
+
+def approximate_log_function(x, y):
+    C = np.arange(0.01, 1, step=0.01)
+    a = np.arange(0.01, 1, step=0.01)
+    b = np.arange(0.01, 1, step=0.01)
+
+    min_mse = 9999999999
+    parameters = [0, 0, 0]
+    LocalWeight = xWeightA(x)
+
+    for i in np.array(np.meshgrid(C, a, b)).T.reshape(-1, 3):
+
+        y_estimation = LocalWeight * i[0] * np.log(i[1] * np.array(x) + i[2])
+        mse = mean_squared_error(y, y_estimation)
+
+        if mse < min_mse:
+            min_mse = mse
+            parameters = [i[0], i[1], i[2]]
+
+    return (min_mse, parameters)
