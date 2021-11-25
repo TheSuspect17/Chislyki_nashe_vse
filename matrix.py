@@ -545,33 +545,175 @@ def Interpolate(splines, x):
     dx = x - s.x
     return s.a + (s.b + (s.c / 2.0 + s.d * dx / 6.0) * dx) * dx;
 
+accuracy = 0.00001
+START_X = -1
+END_X = 6
+START_Y = -1
+END_Y = 20
+temp = []
 
-def xWeightA(x):
-    container = []
-    for k in range(len(x)):
-        if k < int(0.9 * len(x)):
-            container.append(1)
-        else:
-            container.append(1.2)
-    return container
+def whence_differences(y_array):
+    return_array = []
+    for i in range(0, len(y_array) - 1):
+        return_array.append(y_array[i + 1] - y_array[i])
+    return return_array
 
+def witchcraft_start(y_array, h):
+    part_y = [y_array[0]]
+    y = y_array
+    for i in range(0, len(y_array) - 1):
+        y = whence_differences(y)
+        part_y.append(y[0] / math.factorial(i + 1) / (h ** (i + 1)))
+    return part_y
 
-def approximate_log_function(x, y):
-    C = np.arange(0.01, 1, step=0.01)
-    a = np.arange(0.01, 1, step=0.01)
-    b = np.arange(0.01, 1, step=0.01)
+def tragic_magic(coefficients_y, point, x_array):
+    value = coefficients_y[0]
+    for i in range(1, len(coefficients_y)):
+        q = 1
+        for j in range(0, i):
+            q *= (point - x_array[j])
+        value += coefficients_y[i] * q
+    return value
 
-    min_mse = 9999999999
-    parameters = [0, 0, 0]
-    LocalWeight = xWeightA(x)
+def build_points(x_array, y_array):
+    for i in range(0, len(x_array)):
+        plt.scatter(x_array[i], y_array[i])
 
-    for i in np.array(np.meshgrid(C, a, b)).T.reshape(-1, 3):
+def newton_there(x_array, y_array):
+    x0 = x_array[0]
+    h = x_array[1] - x_array[0]
+    build_points(x_array, y_array)
+    part_y = witchcraft_start(y_array, h)
+    x = np.linspace(x_array[0], x_array[len(x_array) - 1], 228)
+    return (x, tragic_magic(part_y, x, x_array), part_y)
 
-        y_estimation = LocalWeight * i[0] * np.log(i[1] * np.array(x) + i[2])
-        mse = mean_squared_error(y, y_estimation)
+def witchcraft_continue(y_array, h):
+    part_y = [y_array[len(y_array) - 1]]
+    y = y_array
+    for i in range(0, len(y_array) - 1):
+        y = whence_differences(y)
+        part_y.append(y[len(y) - 1] / math.factorial(i + 1) / (h ** (i + 1)))
+    return part_y
 
-        if mse < min_mse:
-            min_mse = mse
-            parameters = [i[0], i[1], i[2]]
+def ecstatic_magic(coefficients_y, point, x_array):
+    value = coefficients_y[0]
+    for i in range(1, len(coefficients_y)):
+        q = 1
+        for j in range(0, i):
+            q *= (point - x_array[len(x_array) - j - 1])
+        value += coefficients_y[i] * q
+    return value
 
-    return (min_mse, parameters)
+def newton_here_the_boss(x_array, y_array):
+    x0 = x_array[0]
+    h = x_array[1] - x_array[0]
+    build_points(x_array, y_array)
+    part_y = witchcraft_continue(y_array, h)
+    x = np.linspace(x_array[0], x_array[len(x_array) - 1], 228)
+    return (x, ecstatic_magic(part_y, x, x_array), part_y)
+
+def approximate_log_function(x,y):
+    x_1 = 0
+    x_2 = 0
+    x_3 = 0
+    x_4 = 0
+    x2_y = 0
+    x_y = 0
+    y_1 = 0
+    for i in range(len(x)):
+        x_1 += x[i]
+        x_2 += x[i]**2
+        x_3 += x[i]**3
+        x_4 += x[i]**4
+        x2_y += y[i]*x[i]**2
+        x_y += y[i]*x[i]
+        y_1 += y[i]
+    n = len(x)
+    a = [[x_2,x_3,x_4],[x_1,x_2,x_3],[n,x_1,x_2]]
+    b = [[x2_y],[x_y],[y_1]]
+    roots = gssjrdn(a,b)[2]
+    c = []
+    for i in range(3):
+        c.append(*roots[i])
+    def f_x(t):
+        return c[0]*np.log(c[1]*t)
+    gamma = 0
+    f = []
+    for i in range(len(x)):
+        f.append(f_x(x[i]))
+        gamma += (y[i]-f[i])**2
+    exp = ''
+    for i in [1,0]:
+        if c[i] != 0:
+            exp += f'{c[i]}*ln({c[i+1]}*t) + '
+    exp = exp[:-2]
+    output = [[x[i]]+[y[i]]+[f[i]] for i in range(len(x))]
+    return (output,exp, gamma)
+
+def approximate_exp_function(x,y):
+    x_1 = 0
+    x_2 = 0
+    x_3 = 0
+    x_4 = 0
+    x2_y = 0
+    x_y = 0
+    y_1 = 0
+    for i in range(len(x)):
+        x_1 += x[i]
+        x_2 += x[i]**2
+        x_3 += x[i]**3
+        x_4 += x[i]**4
+        x2_y += y[i]*x[i]**2
+        x_y += y[i]*x[i]
+        y_1 += y[i]
+    n = len(x)
+    a = [[x_2,x_3,x_4],[x_1,x_2,x_3],[n,x_1,x_2]]
+    b = [[x2_y],[x_y],[y_1]]
+    roots = gssjrdn(a,b)[2]
+    c = []
+    for i in range(3):
+        c.append(*roots[i])
+    def f_x(t):
+        return c[0]*math.e**(c[1]*t)
+    gamma = 0
+    f = []
+    for i in range(len(x)):
+        f.append(f_x(x[i]))
+        gamma += (y[i]-f[i])**2
+    exp = ''
+    for i in [1,0]:
+        if c[i] != 0:
+            exp += f'{c[i]}*e**({c[i+1]}*t) + '
+    exp = exp[:-2]
+    output = [[x[i]]+[y[i]]+[f[i]] for i in range(len(x))]
+    return (output,exp, gamma)
+
+def ap_norm_rasp(x,y_real):
+    def norm(x, mean, sd):
+        norm = []
+        for i in range(len(x)):
+            norm += [1.0/(sd*np.sqrt(2*np.pi))*np.exp(-(x[i] - mean)**2/(2*sd**2))]
+        return np.array(norm)
+
+    mean1, mean2 = 0, -2
+    std1, std2 = 0.5, 1 
+    m, dm, sd1, sd2 = [5, 10, 1, 1]
+    p = [m, dm, sd1, sd2] # Initial guesses for leastsq
+    y_init = norm(x, m, sd1) + norm(x, m + dm, sd2) # For final comparison plot
+
+    def res(p, y, x):
+        m, dm, sd1, sd2 = p
+        m1 = m
+        m2 = m1 + dm
+        y_fit = norm(x, m1, sd1) + norm(x, m2, sd2)
+        err = y - y_fit
+        return err
+
+    plsq = leastsq(res, p, args = (y_real, x))
+    y_est = norm(x, plsq[0][0], plsq[0][2]) + norm(x, plsq[0][0] + plsq[0][1], plsq[0][3])
+    gamma = 0
+    for i in range(len(x)):
+        gamma += (y_real[i]-y_init[i])**2
+        output = [[x[i]]+[y_real[i]]+[y_init[i]] for i in range(len(x))]
+    return (output, gamma)
+
