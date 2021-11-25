@@ -160,6 +160,13 @@ plt.legend(loc='best', prop={'size': 8}, frameon = False)
 
 plt.show()
 
+#Интерполяция стандартной библиотекой
+interpol_st(x,y)
+
+#Апроксимация стандартной библиотекой
+aprox_st(x,y)
+
+
 # Интерполяция Ньютоном (прямой ход)
 
 noname = newton_there(x,y)
