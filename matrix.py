@@ -717,3 +717,20 @@ def ap_norm_rasp(x,y_real):
         output = [[x[i]]+[y_real[i]]+[y_init[i]] for i in range(len(x))]
     return (output, gamma)
 
+def interpol_st(xp,fp):
+    x = np.linspace(-np.pi, 10, 100)
+    y = np.interp(x, xp, fp)
+    fig, ax = plt.subplots()
+    plt.plot(xp, fp,'b',label="Исходные точки")
+    plt.plot(x, y,'r',label=f'Интерполированная функция')
+    plt.title('Интерполяция точек стандартной numpy')
+    plt.show()
+    
+def aprox_st(xp,fp):
+    x = np.linspace(-len(xp)/2, len(xp)/2, 100)
+    y = np.polyfit(xp, fp, 99)
+    fig, ax = plt.subplots()
+    plt.plot(xp, fp,'b',label="Исходные точки")
+    plt.plot(x, y,'r',label=f'Интерполированная функция')
+    plt.title('Апроксимация точек стандартной numpy')
+    plt.show()
