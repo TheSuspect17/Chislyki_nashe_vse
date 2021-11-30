@@ -612,43 +612,49 @@ def newton_here_the_boss(x_array, y_array):
     x = np.linspace(x_array[0], x_array[len(x_array) - 1], 228)
     return (x, ecstatic_magic(part_y, x, x_array), part_y)
 
-# Апроксимация логарифмической функцией   
+def approximate_log_function(x, y):
 
-noname = approximate_log_function(x,y)
-_ = noname[0]
-gamma = round(noname[1],3)
-x_square = []
-f_square = []
-for i in range(len(x)):
-    x_square.append(_[i][0])
-    f_square.append(_[i][2])
+    C = np.arange(0.01, 1, step = 0.01)
+    a = np.arange(0.01, 1, step = 0.01)
+    b = np.arange(0.01, 1, step = 0.01)
 
-plt.plot(x, y, 'b', label="Исходные точки")
-plt.plot(x_square, f_square, 'r', label=f'Интерполированная функция c G = {gamma}')
+    min_mse = 9999999999
+    parameters = [0, 0, 0]
 
-plt.title("Аппрокисмация логарифмической функцией")
-plt.ylabel(u'Функция')
-plt.legend(loc='best', prop={'size': 8}, frameon = False)
-
-#Апроксимация функцией нормального распределения
-
-noname = ap_norm_rasp(x,y)
-_ = noname[0]
-gamma = round(noname[1],3)
-x_square = []
-f_square = []
-for i in range(len(x)):
-    x_square.append(_[i][0])
-    f_square.append(_[i][2])
-
-plt.plot(x, y, 'b', label="Исходные точки")
-plt.plot(x_square, f_square, 'r', label=f'Интерполированная функция c G = {gamma}')
-
-plt.title("Аппрокисмация функцией нормального распределения")
-plt.ylabel(u'Функция')
-plt.legend(loc='best', prop={'size': 8}, frameon = False)
-
-plt.show()
+    for i in np.array(np.meshgrid(C, a, b)).T.reshape(-1, 3):
+        y_estimation = i[0] * np.log(i[1] * np.array(x) + i[2])  
+        mse = mean_squared_error(y, y_estimation)
+        if mse < min_mse:
+            min_mse = mse
+            parameters = [i[0], i[1], i[2]]
+    output = [[x[i]]+[y[i]]+[y_estimation[i] for i in range(len(y_estimation[i]))]  
+    return (output, min_mse)
+              
+def ap_norm_rasp(x,y_real):
+    def norm(x, mean, sd):
+        norm = []
+        for i in range(len(x)):
+            norm += [1.0/(sd*np.sqrt(2*np.pi))*np.exp(-(x[i] - mean)**2/(2*sd**2))]
+        return np.array(norm)
+    mean1, mean2 = 10, -2
+    std1, std2 = 0.5, 10 
+    m, dm, sd1, sd2 = [3, 10, 1, 1]
+    p = [m, dm, sd1, sd2] # Initial guesses for leastsq
+    y_init = norm(x, m, sd1) + norm(x, m + dm, sd2) # For final comparison plot
+    def res(p, y, x):
+        m, dm, sd1, sd2 = p
+        m1 = m
+        m2 = m1 + dm
+        y_fit = norm(x, m1, sd1) + norm(x, m2, sd2)
+        err = y - y_fit
+        return err
+    plsq = leastsq(res, p, args = (y_real, x))
+    y_est = norm(x, plsq[0][0], plsq[0][2]) + norm(x, plsq[0][0] + plsq[0][1], plsq[0][3])
+    gamma = 0
+    for i in range(len(x)):
+        gamma += (y_real[i]-y_init[i])**2
+        output = [[x[i]]+[y_real[i]]+[y_init[i]] for i in range(len(x))]
+    return (output, gamma)
 
 def approximate_exp_function(x,y):
     x_1 = 0
