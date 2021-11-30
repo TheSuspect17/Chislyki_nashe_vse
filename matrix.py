@@ -612,43 +612,43 @@ def newton_here_the_boss(x_array, y_array):
     x = np.linspace(x_array[0], x_array[len(x_array) - 1], 228)
     return (x, ecstatic_magic(part_y, x, x_array), part_y)
 
-def approximate_log_function(x,y):
-    x_1 = 0
-    x_2 = 0
-    x_3 = 0
-    x_4 = 0
-    x2_y = 0
-    x_y = 0
-    y_1 = 0
-    for i in range(len(x)):
-        x_1 += x[i]
-        x_2 += x[i]**2
-        x_3 += x[i]**3
-        x_4 += x[i]**4
-        x2_y += y[i]*x[i]**2
-        x_y += y[i]*x[i]
-        y_1 += y[i]
-    n = len(x)
-    a = [[x_2,x_3,x_4],[x_1,x_2,x_3],[n,x_1,x_2]]
-    b = [[x2_y],[x_y],[y_1]]
-    roots = gssjrdn(a,b)[2]
-    c = []
-    for i in range(3):
-        c.append(*roots[i])
-    def f_x(t):
-        return c[0]*np.log(c[1]*t)
-    gamma = 0
-    f = []
-    for i in range(len(x)):
-        f.append(f_x(x[i]))
-        gamma += (y[i]-f[i])**2
-    exp = ''
-    for i in [1,0]:
-        if c[i] != 0:
-            exp += f'{c[i]}*ln({c[i+1]}*t) + '
-    exp = exp[:-2]
-    output = [[x[i]]+[y[i]]+[f[i]] for i in range(len(x))]
-    return (output,exp, gamma)
+# Апроксимация логарифмической функцией   
+
+noname = approximate_log_function(x,y)
+_ = noname[0]
+gamma = round(noname[1],3)
+x_square = []
+f_square = []
+for i in range(len(x)):
+    x_square.append(_[i][0])
+    f_square.append(_[i][2])
+
+plt.plot(x, y, 'b', label="Исходные точки")
+plt.plot(x_square, f_square, 'r', label=f'Интерполированная функция c G = {gamma}')
+
+plt.title("Аппрокисмация логарифмической функцией")
+plt.ylabel(u'Функция')
+plt.legend(loc='best', prop={'size': 8}, frameon = False)
+
+#Апроксимация функцией нормального распределения
+
+noname = ap_norm_rasp(x,y)
+_ = noname[0]
+gamma = round(noname[1],3)
+x_square = []
+f_square = []
+for i in range(len(x)):
+    x_square.append(_[i][0])
+    f_square.append(_[i][2])
+
+plt.plot(x, y, 'b', label="Исходные точки")
+plt.plot(x_square, f_square, 'r', label=f'Интерполированная функция c G = {gamma}')
+
+plt.title("Аппрокисмация функцией нормального распределения")
+plt.ylabel(u'Функция')
+plt.legend(loc='best', prop={'size': 8}, frameon = False)
+
+plt.show()
 
 def approximate_exp_function(x,y):
     x_1 = 0
@@ -687,35 +687,6 @@ def approximate_exp_function(x,y):
     exp = exp[:-2]
     output = [[x[i]]+[y[i]]+[f[i]] for i in range(len(x))]
     return (output,exp, gamma)
-
-def ap_norm_rasp(x,y_real):
-    def norm(x, mean, sd):
-        norm = []
-        for i in range(len(x)):
-            norm += [1.0/(sd*np.sqrt(2*np.pi))*np.exp(-(x[i] - mean)**2/(2*sd**2))]
-        return np.array(norm)
-
-    mean1, mean2 = 0, -2
-    std1, std2 = 0.5, 1 
-    m, dm, sd1, sd2 = [5, 10, 1, 1]
-    p = [m, dm, sd1, sd2] # Initial guesses for leastsq
-    y_init = norm(x, m, sd1) + norm(x, m + dm, sd2) # For final comparison plot
-
-    def res(p, y, x):
-        m, dm, sd1, sd2 = p
-        m1 = m
-        m2 = m1 + dm
-        y_fit = norm(x, m1, sd1) + norm(x, m2, sd2)
-        err = y - y_fit
-        return err
-
-    plsq = leastsq(res, p, args = (y_real, x))
-    y_est = norm(x, plsq[0][0], plsq[0][2]) + norm(x, plsq[0][0] + plsq[0][1], plsq[0][3])
-    gamma = 0
-    for i in range(len(x)):
-        gamma += (y_real[i]-y_init[i])**2
-        output = [[x[i]]+[y_real[i]]+[y_init[i]] for i in range(len(x))]
-    return (output, gamma)
 
 def interpol_st(xp,fp):
     x = np.linspace(-np.pi, 10, 100)
