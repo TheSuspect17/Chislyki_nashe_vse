@@ -118,7 +118,6 @@ ax.plot(x, y, 'b', label="Исходные точки")
 ax.plot(x_square, f_square, 'r', label=f'Аппроксимированная функция c G = {gamma}')
 
 ax.set_title("Аппрокисмация логарифмической функцией ")
-ax.set_ylabel(u'Функция')
 ax.legend(loc='best', prop={'size': 8}, frameon = False)
 
 #plt.show()
@@ -139,7 +138,6 @@ ax.plot(x, y, 'b', label="Исходные точки")
 ax.plot(x_square, f_square, 'r', label=f'Аппроксимированная функция c G = {gamma}')
 
 ax.set_title("Аппрокисмация функцией нормального распределения")
-ax.set_ylabel(u'Функция')
 ax.legend(loc='best', prop={'size': 8}, frameon = False)
 
 #plt.show()
@@ -160,7 +158,7 @@ ax.plot(x, y, 'b', label="Исходные точки")
 ax.plot(x_square, f_square, 'r', label=f'Аппрокисимированная функция c G = {gamma}')
 
 ax.set_title("Аппрокисмация экспоненциальной функцией ")
-ax.set_ylabel(u'Функция')
+
 ax.legend(loc='best', prop={'size': 8}, frameon = False)
 
 #plt.show()
@@ -178,7 +176,6 @@ for i in (np.linspace(min(x),max(x),1000)):
 ax.plot(x, y, 'b', label="Исходные точки")
 ax.plot(x_np, y_np, 'r', label=f'Интерполированная функция')
 ax.set_title("Интерполяция стандартной библиотекой")
-ax.set_ylabel(u'Функция')
 ax.legend(loc='best', prop={'size': 8}, frameon = False)
 
 
@@ -195,7 +192,6 @@ for i in range(int(min(x) * 10), int(max(x) * 10)):
 #ax.plot(x_np, y_np, 'r', label=f'Аппроксимированная функция')
 
 ax.set_title("Аппроксимация стандартной библиотекой")
-ax.set_ylabel(u'Функция')
 ax.legend(loc='best', prop={'size': 8}, frameon = False)
 
 
@@ -231,7 +227,6 @@ for i in range(len(noname[1])):
 ax.plot(x, y, 'b', label="Исходные точки")
 ax.plot(x1_square, f1_square, 'r', label=f'Интерполированная функция')
 ax.set_title("Интерполяция Ньтоном (обратный ход) ")
-ax.set_ylabel(u'Функция')
 ax.legend(loc='best', prop={'size': 8}, frameon = False)
 
 plt.show()
