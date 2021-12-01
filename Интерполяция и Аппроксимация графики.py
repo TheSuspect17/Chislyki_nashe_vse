@@ -181,15 +181,15 @@ ax.legend(loc='best', prop={'size': 8}, frameon = False)
 
 #Аппроксимация стандартной библиотекой
 ax = fig.axes[8]
-x_np = []
-y_np = []
+x_np = x
+y_np = y
 for i in range(int(min(x) * 10), int(max(x) * 10)):
     x_np.append(i / 10)
     y_np.append(np.interp(i / 10, x, y))
 
 
-#ax.plot(x, y, 'b', label="Исходные точки")
-#ax.plot(x_np, y_np, 'r', label=f'Аппроксимированная функция')
+ax.plot(x, y, 'b', label="Исходные точки")
+ax.plot(x_np, y_np, 'r', label=f'Dont naideno, potracheno 100500 h')
 
 ax.set_title("Аппроксимация стандартной библиотекой")
 ax.legend(loc='best', prop={'size': 8}, frameon = False)
