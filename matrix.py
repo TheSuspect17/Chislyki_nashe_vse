@@ -5,6 +5,9 @@ from scipy.optimize import leastsq
 from sympy import symbols, expand, lambdify
 import numpy as np
 import random
+import math
+from scipy.optimize import leastsq, curve_fit
+from sklearn.metrics import mean_squared_error
 
 
 def is_number(str):
