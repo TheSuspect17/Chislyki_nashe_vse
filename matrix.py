@@ -625,12 +625,12 @@ def approximate_log_function(x, y):
     parameters = [0, 0, 0]
 
     for i in np.array(np.meshgrid(C, a, b)).T.reshape(-1, 3):
-        y_estimation = i[0] * np.log(i[1] * np.array(x) + i[2])  
+        y_estimation = i[0] * np.log(i[1] * np.array(x) + i[2])
         mse = mean_squared_error(y, y_estimation)
         if mse < min_mse:
             min_mse = mse
             parameters = [i[0], i[1], i[2]]
-    output = [[x[i]]+[y[i]]+[y_estimation[i] for i in range(len(y_estimation[i]))]  
+    output = [[x[i]]+[y[i]]+[y_estimation[i]] for i in range(len(x))]
     return (output, min_mse)
               
 def ap_norm_rasp(x,y_real):
