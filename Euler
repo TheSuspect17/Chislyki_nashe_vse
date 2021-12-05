@@ -1,0 +1,75 @@
+import math
+import numpy as np
+import os
+import matplotlib.pyplot as plt
+
+C = 0.693  # Константы (можно ввод с клавиатуры)
+HS = 0.01
+HF = 1.01
+HH = 0.05 
+X0 = 0
+Y0 = 1
+XF = 3
+def equation(x, y):
+    return 2 * (math.sqrt(y) + y)  #ВВОД С КЛАВИАТУРЫ
+
+class Exact:
+    def __init__(self, solved_equation, h):
+        self.f = solved_equation
+        self.h = h
+
+    def _next_y(self, xi, yi):
+        return self.f(xi)
+
+    def calculate(self, x0, y0, xf):
+        ys = []
+        xs = np.arange(x0 + self.h, xf + self.h, self.h)  # вектор всех значений x
+        y = y0
+        for x in xs:
+            ys.append(y)
+            y = self._next_y(x, y)
+        return ys
+
+class Euler(Exact):
+    def _next_y(self, xi, yi):
+        return yi + self.h * self.f(xi, yi)
+
+class ImprovedEuler(Euler):
+    def _next_y(self, xi, yi):
+        h2 = self.h / 2
+        delta_y = self.h * self.f(xi + h2, yi + h2 * self.f(xi, yi))
+        return yi + delta_y
+
+def draw(x0, xf, h, labels, *args):
+    assert len(labels) == len(args)
+    xs = np.arange(x0, xf, h)
+    for (i, ys) in enumerate(args):
+        return (xs, ys)
+
+def solved_equation(x):
+    return (math.exp(x + C) - 1) ** 2
+
+def calculate_error(ys_approx, ys_exact):
+    return [abs(y1 - y2) for y1, y2 in zip(ys_approx, ys_exact)]
+
+def calculate_mean_error(ys_approx, ys_exact):
+    return sum(calculate_error(ys_approx, ys_exact))/len(ys_exact)
+
+if __name__ == '__main__':
+    euler_error = []
+    better_euler_error = []
+    rk_error = []
+
+    h_axis = np.arange(HS, HF, HH)
+    for H in h_axis:
+        exact = Exact(solved_equation, H)
+        exact_ys = exact.calculate(X0, Y0, XF)
+        euler = Euler(equation, H)
+        euler_ys = euler.calculate(X0, Y0, XF)
+        better_euler = ImprovedEuler(equation, H)
+        b_euler_ys = better_euler.calculate(X0, Y0, XF)
+        euler_error.append(calculate_mean_error(euler_ys, exact_ys))
+        better_euler_error.append(calculate_mean_error(b_euler_ys, exact_ys))
+
+    print(draw(HS, HF, HH, ['Euler', 'Impr Euler'], euler_error, better_euler_error))        
+        
