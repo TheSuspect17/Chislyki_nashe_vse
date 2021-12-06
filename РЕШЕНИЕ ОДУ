@@ -37,11 +37,28 @@ class ImprovedEuler(Euler):
         delta_y = self.h * self.f(xi + h2, yi + h2 * self.f(xi, yi))
         return yi + delta_y
     
-def rungekutta4(f):
+def rungekutta4():
+    t = symbols('t')
+    y = symbols('y')
+    z = symbols('z')
+    equation = []
+
+    qwe = eval(input('Введите y` [доступные символы t,y,z]: '))
+    equation.append(qwe)
+    global answer
+    answer = input('Хотите ввести еще одно уравнение? [1/0] ')
+    if answer == '1':
+        qwe = eval(input('Введите z` [доступные символы t,y,z]: '))
+        equation.append(qwe)
+    function = []
+    for i in range(len(equation)):
+        function.append(lambdify([t, y, z], equation[i]))
     y0 = float(input('Начальное условие, y0 = '))
+    if answer == '1':
+        z0 = float(input('Начальное условие, z0 = '))
+        zn = z0
     a = float(input('Начало промежутка: '))
     b = float(input('Конец промежутка: '))
-    global n
     n = 100
     h = (b - a) / n
     output = [[0, 0, y0]]
@@ -50,16 +67,38 @@ def rungekutta4(f):
     otrezok = []
     for i in range(n):
         a += h
-        otrezok.append(round(a,5))
-    for i in otrezok:
-        counter += 1
-        k1 = f(i, yn) * h
-        k2 = f(i + h / 2, yn + k1/h) * h
-        k3 = f(i + h / 2, yn + k2/2) * h
-        k4 = f(i + h, yn + k3) * h
-        yn = yn + (1 / 6) * (k1 + 2 * k2 + 3 * k3 + k4)
-        output.append([counter, i, yn])
-    return output
+        otrezok.append(round(a, 5))
+    if answer == '0':
+        for i in otrezok:
+            counter += 1
+            k1 = function[0](i, yn) * h
+            k2 = function[0](i + h / 2, yn + k1 / 2) * h
+            k3 = function[0](i + h / 2, yn + k2 / 2) * h
+            k4 = function[0](i + h, yn + k3) * h
+            yn = yn + (1 / 6) * (k1 + 2 * k2 + 3 * k3 + k4)
+            output.append([counter, i, yn])
+        return output
+    elif answer == '1':
+        output = [[0, 0, y0, z0]]
+        for i in otrezok:
+            counter += 1
+            k1 = function[0](i, yn, zn) * h
+            m1 = function[1](i, yn, zn) * h
+
+            k2 = function[0](i + h / 2, yn + k1 / 2, zn + m1 / 2) * h
+            m2 = function[1](i + h / 2, yn + k1 / 2, zn + m1 / 2) * h
+
+            k3 = function[0](i + h / 2, yn + k2 / 2, zn + m2 / 2) * h
+            m3 = function[1](i + h / 2, yn + k2 / 2, zn + m2 / 2) * h
+
+            k4 = function[0](i + h, yn + k3, zn + m3) * h
+            m4 = function[1](i + h, yn + k3, zn + m3) * h
+
+            yn = yn + (1 / 6) * (k1 + 2 * k2 + 3 * k3 + k4)
+            zn = zn + (1 / 6) * (m1 + 2 * m2 + 3 * m3 + m4)
+            output.append([counter, i, yn, zn])
+        return output
+
 
 plt.style.use('ggplot')    
     
