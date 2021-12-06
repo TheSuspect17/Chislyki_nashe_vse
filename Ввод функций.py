@@ -1,3 +1,4 @@
+from sympy import symbols, lambdify, sqrt, cos, sin, log, exp
 def input_function():
     t = symbols('t')
     y = symbols('y')
