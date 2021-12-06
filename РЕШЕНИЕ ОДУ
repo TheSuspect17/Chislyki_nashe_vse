@@ -10,7 +10,7 @@ HH = 0.01
 X0 = 0
 Y0 = 1
 XF = 100
-answer = 0
+answer = '0'
 
 class Exact:
     def __init__(self, solved_equation, h):
@@ -39,7 +39,7 @@ class ImprovedEuler(Euler):
         delta_y = self.h * self.f(xi + h2, yi + h2 * self.f(xi, yi))
         return yi + delta_y
     
-def rungekutta4():
+def input_function():
     t = symbols('t')
     y = symbols('y')
     z = symbols('z')
@@ -55,6 +55,9 @@ def rungekutta4():
     function = []
     for i in range(len(equation)):
         function.append(lambdify([t, y, z], equation[i]))
+    return function
+
+def rungekutta4(function):
     y0 = float(input('Начальное условие, y0 = '))
     if answer == '1':
         z0 = float(input('Начальное условие, z0 = '))
@@ -73,10 +76,10 @@ def rungekutta4():
     if answer == '0':
         for i in otrezok:
             counter += 1
-            k1 = function[0](i, yn) * h
-            k2 = function[0](i + h / 2, yn + k1 / 2) * h
-            k3 = function[0](i + h / 2, yn + k2 / 2) * h
-            k4 = function[0](i + h, yn + k3) * h
+            k1 = function[0](i, yn,1) * h
+            k2 = function[0](i + h / 2, yn + k1 / 2, 1) * h
+            k3 = function[0](i + h / 2, yn + k2 / 2, 1) * h
+            k4 = function[0](i + h, yn + k3, 1) * h
             yn = yn + (1 / 6) * (k1 + 2 * k2 + 3 * k3 + k4)
             output.append([counter, i, yn])
         return output
@@ -208,7 +211,7 @@ x = []
 y = []
 z = []
 
-noname = rungekutta4()
+noname = rungekutta4(input_function())
 for i in range(len(noname)):
     x.append(noname[i][1])
     y.append(noname[i][2])
@@ -216,18 +219,23 @@ for i in range(len(noname)):
         z.append(noname[i][3])
 
 
+
+
 plt.plot(x, y, label='Выходные точки Рунге-Кутты функции y(t)')
-plt.plot(x, z, label='Выходные точки Рунге-Кутты функции z(t)')
+if answer == '1':
+    plt.plot(x, z, label='Выходные точки Рунге-Кутты функции z(t)')
 plt.title("Выходные точки метода Рунге-Кутты")
-plt.legend(loc='best', prop={'size': 8}, frameon = False)
+
+plt.legend(loc='best', prop={'size': 8}, frameon=False)
+
 plt.show()
 
 noname = method_min_square(x, y)
 _ = noname[0]
-nonamez = method_min_square(x,z)
-_z = nonamez[0]
-
-gamma_z = round(nonamez[2], 3)
+if answer == "1":
+    nonamez = method_min_square(x,z)
+    _z = nonamez[0]
+    gamma_z = round(nonamez[2], 3)
 gamma_y = round(noname[2], 3)
 x_square = []
 y_square = []
@@ -238,22 +246,31 @@ for i in range(len(x)):
     if answer == '1':
         z_square.append(_z[i][2])
 
+
 plt.plot(x_square, y_square, 'r', label=f'МНК y(t) c G = {gamma_y}')
-plt.plot(x_square, z_square, 'b', label=f'МНК z(t) c G = {gamma_z}')
+if answer == '1':
+    plt.plot(x_square, z_square, 'b', label=f'МНК z(t) c G = {gamma_z}')
 plt.title("МНК")
-plt.legend(loc='best', prop={'size': 8}, frameon = False)
+plt.legend(loc='best', prop={'size': 8}, frameon=False)
+
 plt.show()
 
-noname = newton_here_the_boss(x,y)
-straight = noname[1]
+noname = newton_here_the_boss(x, y)
+if answer == '1':
+    nonamez = newton_here_the_boss(x,z)
 x1_square = []
 f1_square = []
+z_square = []
 for i in range(len(noname[1])):
     x1_square.append(noname[0][i])
     f1_square.append(noname[1][i])
-
-plt.plot(x1_square, f1_square, 'r', label=f'Ньютон')
+    if answer == '1':
+        z_square.append(nonamez[1][i])
+plt.plot(x1_square, f1_square, 'r', label=f'Ньютон y')
+if answer == '1':
+    plt.plot(x1_square, z_square, 'b', label=f'Ньютон z')
 plt.title("Ньютон")
-plt.legend(loc='best', prop={'size': 8}, frameon = False)
+plt.legend(loc='best', prop={'size': 8}, frameon=False)
 
 plt.show()
+
