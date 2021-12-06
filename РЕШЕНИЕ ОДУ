@@ -10,6 +10,7 @@ HH = 0.01
 X0 = 0
 Y0 = 1
 XF = 100
+answer = 0
 
 class Exact:
     def __init__(self, solved_equation, h):
@@ -205,27 +206,40 @@ plt.show()
 
 x = []
 y = []
+z = []
 
-noname = rungekutta4(func)
-for i in range(n):
+noname = rungekutta4()
+for i in range(len(noname)):
     x.append(noname[i][1])
     y.append(noname[i][2])
+    if answer == '1':
+        z.append(noname[i][3])
 
-plt.plot(x,y, label = 'Выходные точки Рунге-Кутты')
+
+plt.plot(x, y, label='Выходные точки Рунге-Кутты функции y(t)')
+plt.plot(x, z, label='Выходные точки Рунге-Кутты функции z(t)')
 plt.title("Выходные точки метода Рунге-Кутты")
 plt.legend(loc='best', prop={'size': 8}, frameon = False)
 plt.show()
 
-noname = method_min_square(x,y)
+noname = method_min_square(x, y)
 _ = noname[0]
-gamma = round(noname[2],3)
+nonamez = method_min_square(x,z)
+_z = nonamez[0]
+
+gamma_z = round(nonamez[2], 3)
+gamma_y = round(noname[2], 3)
 x_square = []
-f_square = []
+y_square = []
+z_square = []
 for i in range(len(x)):
     x_square.append(_[i][0])
-    f_square.append(_[i][2])
+    y_square.append(_[i][2])
+    if answer == '1':
+        z_square.append(_z[i][2])
 
-plt.plot(x_square, f_square, 'r', label=f'МНК c G = {gamma}')
+plt.plot(x_square, y_square, 'r', label=f'МНК y(t) c G = {gamma_y}')
+plt.plot(x_square, z_square, 'b', label=f'МНК z(t) c G = {gamma_z}')
 plt.title("МНК")
 plt.legend(loc='best', prop={'size': 8}, frameon = False)
 plt.show()
