@@ -54,12 +54,12 @@ def rungekutta4(f):
     for i in otrezok:
         counter += 1
         k1 = f(i, yn) * h
-        k2 = f(i + h / 2, yn + k1/2) * h
+        k2 = f(i + h / 2, yn + k1/h) * h
         k3 = f(i + h / 2, yn + k2/2) * h
         k4 = f(i + h, yn + k3) * h
-        yn = yn + (h / 6) * (k1 + 2 * k2 + 3 * k3 + k4)
+        yn = yn + (1 / 6) * (k1 + 2 * k2 + 3 * k3 + k4)
         output.append([counter, i, yn])
-    return output    
+    return output
 
 plt.style.use('ggplot')    
     
