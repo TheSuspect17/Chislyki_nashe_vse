@@ -2,6 +2,7 @@ import matplotlib.pyplot as plt
 import math
 import numpy as np
 from matrix import method_min_square, newton_here_the_boss
+from sympy import symbols, lambdify, sqrt, cos, sin, log, exp
 
 HS = 0.01     #Константы 
 HF = 1.01 
