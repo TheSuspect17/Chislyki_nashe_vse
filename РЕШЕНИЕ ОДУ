@@ -53,10 +53,10 @@ def rungekutta4(f):
         otrezok.append(round(a,5))
     for i in otrezok:
         counter += 1
-        k1 = f(i, yn)
-        k2 = f(i + h / 2, yn + h / 2 * k1)
-        k3 = f(i + h / 2, yn + h / 2 * k2)
-        k4 = f(i + h, yn + h * k3)
+        k1 = f(i, yn) * h
+        k2 = f(i + h / 2, yn + k1/2) * h
+        k3 = f(i + h / 2, yn + k2/2) * h
+        k4 = f(i + h, yn + k3) * h
         yn = yn + (h / 6) * (k1 + 2 * k2 + 3 * k3 + k4)
         output.append([counter, i, yn])
     return output    
