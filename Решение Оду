@@ -334,9 +334,22 @@ plt.show()
 
 
 delta = []
-dy_left_side = diff_left_side(x,y)
-for i in range(len(dy_left_side)):
-    delta.append(abs(dy_left_side[i] - Input[0](x[i],y[i],1)))
-plt.plot(x[:-1],delta,'b', label = 'Погрешность')
+dy_left_side_y = diff_left_side(x, y)
+if answer != '1':
+    for i in range(len(dy_left_side_y)):
+        delta.append(abs(dy_left_side_y[i] - Input[0](x[i], y[i], 1)))
+    summa_y = sum(delta)
+if answer == '1':
+    delta_z = []
+    dy_left_side_y = diff_left_side(x, z)
+    for i in range(len(dy_left_side_y)):
+        delta.append(abs(dy_left_side_y[i] - Input[0](x[i], y[i], z[i])))
+        delta_z.append(abs(dy_left_side_y[i] - Input[1](x[i], y[i], z[i])))
+    summa_y = sum(delta)
+    summa_z = sum(delta_z)
+    plt.plot(x[:-1], delta_z, 'r', label=f'Погрешность z sum = {summa_z}')
+    plt.legend(loc='best', prop={'size': 8}, frameon=False)
+
+plt.plot(x[:-1], delta, 'b', label=f'Погрешность y sum = {summa_y}')
 plt.legend(loc='best', prop={'size': 8}, frameon=False)
 plt.show()
