@@ -134,6 +134,13 @@ def rungekutta4(function):
             output.append([counter, i, yn, zn])
         return output
 
+def diff_left_side(x,y):
+    h = x[1] - x[0]
+    dy = []
+    for i in range(1,len(x)):
+        dy.append((y[i] - y[i-1])/h)
+    return dy
+
 plt.style.use('ggplot')    
 
 Input =  input_function()
@@ -323,4 +330,13 @@ if answer == '1':
 plt.title("Ньютон")
 plt.legend(loc='best', prop={'size': 8}, frameon=False)
 
+plt.show()
+
+
+delta = []
+dy_left_side = diff_left_side(x,y)
+for i in range(len(dy_left_side)):
+    delta.append(abs(dy_left_side[i] - Input[0](x[i],y[i],1)))
+plt.plot(x[:-1],delta,'b', label = 'Погрешность')
+plt.legend(loc='best', prop={'size': 8}, frameon=False)
 plt.show()
