@@ -1,0 +1,50 @@
+def stndrt_func(func,n=100):
+    Y0 = float(input('Начальное условие, y0 = '))
+    a = float(input('Начало промежутка: '))
+    b = float(input('Конец промежутка: '))
+    if answer == '1':
+        Z0 = float(input('Начальное условие, z0 = '))
+    x = np.zeros(n + 1)
+    y = np.zeros(n + 1)
+    z = np.zeros(n + 1)
+    y[0] = Y0
+    if answer == '1':
+        z[0] = Z0
+    x[0] = a
+    output = [[0, Y0]]
+    dx = b / float(n)
+    if answer == '0':
+        for k in range(n):
+            x[k] = x[k+1]+dx
+        y = odeint (func[0], Y0, x)
+        y = np.array(y).flatten()
+        output.append([x, y,z])
+        return output
+    if answer == '1':
+        output = [[0,  Y0, Z0]]
+        for k in range(n):
+            x[k + 1] = x[k] + dx
+        y = odeint (func[0](x,y,0), Y0, x)
+        z = odeint (func[1](x,z,0), Z0, x)   
+        output.append([x, y,z])
+        return output
+        
+        
+        
+        
+        
+qwe5 = stndrt_func(Input)
+X5= []
+Y5 = []
+Z5 = []
+for i in range(len(qwe5)):
+    X5.append(qwe[i][0])
+    Y5.append(qwe[i][1])
+    if answer == '1':
+        Z5.append(qwe[i][2])
+plt.plot(X5, Y5, label='Стандарт')
+if answer == '1':
+    plt.plot(X5, Z5, label='стандарт')
+plt.title("Стандарт")
+plt.legend(loc='best', prop={'size': 8}, frameon = False)
+plt.show()
