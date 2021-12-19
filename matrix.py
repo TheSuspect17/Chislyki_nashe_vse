@@ -779,7 +779,9 @@ def method_ant(distmat, alpha=0.6, beta=0.65, pheEvaRate=0.3):
     iter, itermax = 1, 1500  # Итерации
     antPath = np.zeros((antNum, cityNum)).astype(int) - 1
     while iter < itermax:
-        antPath = np.zeros((antNum, cityNum)).astype(int) - 1  # Путь муравья
+        antPath = []
+        for i in range(cityNum):
+            antPath.append([-1]*cityNum)
         firstCity = [i for i in range(cityNum)]
         rd.shuffle(firstCity)  # Случайно назначьте начальный город для каждого муравья
         unvisted = []
