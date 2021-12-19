@@ -865,18 +865,18 @@ def cost(G, s):
         l += G[s[i]][s[i+1]]
     l += G[s[len(s)-1]][s[0]] 
     return l
-def copyToFinal(curr_path):
+def copyToFinal(curr_path,N):
     final_path[:N + 1] = curr_path[:]
     final_path[N] = curr_path[0]
 
-def firstMin(adj, i):
+def firstMin(adj, i,N):
     min_ = maxsize
     for k in range(N):
         if adj[i][k] < min_ and i != k:
             min_ = adj[i][k]
     return min_
 
-def secondMin(adj, i):
+def secondMin(adj, i,N):
     first, second = maxsize, maxsize
     for j in range(N):
         if i == j:
@@ -889,13 +889,13 @@ def secondMin(adj, i):
             second = adj[i][j]
     return second
 
-def TSPRec(adj, curr_bound, curr_weight, level, curr_path, visited):
+def TSPRec(adj, curr_bound, curr_weight, level, curr_path, visited,N):
     global final_res
     if level == N:
         if adj[curr_path[level - 1]][curr_path[0]] != 0:
             curr_res = curr_weight + adj[curr_path[level - 1]][curr_path[0]]
             if curr_res < final_res:
-                copyToFinal(curr_path)
+                copyToFinal(curr_path,N)
                 final_res = curr_res
         return
 
@@ -904,13 +904,13 @@ def TSPRec(adj, curr_bound, curr_weight, level, curr_path, visited):
             temp = curr_bound
             curr_weight += adj[curr_path[level - 1]][i]
             if level == 1:
-                curr_bound -= ((firstMin(adj, curr_path[level - 1]) + firstMin(adj, i)) / 2)
+                curr_bound -= ((firstMin(adj, curr_path[level - 1]) + firstMin(adj, i),N) / 2)
             else:
-                curr_bound -= ((secondMin(adj, curr_path[level - 1]) + firstMin(adj, i)) / 2)
+                curr_bound -= ((secondMin(adj, curr_path[level - 1]) + firstMin(adj, i),N) / 2)
             if curr_bound + curr_weight < final_res:
                 curr_path[level] = i
                 visited[i] = True
-                TSPRec(adj, curr_bound, curr_weight, level + 1, curr_path, visited)
+                TSPRec(adj, curr_bound, curr_weight, level + 1, curr_path, visited,N)
             curr_weight -= adj[curr_path[level - 1]][i]
             curr_bound = temp
             visited = [False] * len(visited)
@@ -918,7 +918,7 @@ def TSPRec(adj, curr_bound, curr_weight, level, curr_path, visited):
                 if curr_path[j] != -1:
                     visited[curr_path[j]] = True
 
-def TSP(adj):
+def TSP(adj,N):
     curr_bound = 0
     curr_path = [-1] * (N + 1)
     visited = [False] * N
@@ -927,4 +927,4 @@ def TSP(adj):
     curr_bound = math.ceil(curr_bound / 2)
     visited[0] = True
     curr_path[0] = 0
-    TSPRec(adj, curr_bound, 0, 1, curr_path, visited)
+    TSPRec(adj, curr_bound, 0, 1, curr_path, visited,N)
