@@ -71,15 +71,15 @@ while iter < itermax:
         pheromone[antPath[i][-1]][antPath[i][0]] += 1 / length[i]
 
     # Визуализация
-    graph = nx.Graph()
-    for i in range(len(antPath[length.index(min(length))])-1):
-        add_edge(antPath[length.index(min(length))][i], antPath[length.index(min(length))][i+1], graph=graph)
-    nx.draw_circular(graph,
-                     node_color='red',
-                     node_size=1000,
-                     with_labels=True)
-    plt.title(f"Итерация {iter}")
-    plt.show()
+    #graph = nx.Graph()
+    #for i in range(len(antPath[length.index(min(length))])-1):
+        #add_edge(antPath[length.index(min(length))][i], antPath[length.index(min(length))][i+1], graph=graph)
+    #nx.draw_circular(graph,
+                     #node_color='red',
+                     #node_size=1000,
+                     #with_labels=True)
+    #plt.title(f"Итерация {iter}")
+    #plt.show()
     iter += 1
 print("«Кратчайшее расстояние:»")
 print(min(length))
