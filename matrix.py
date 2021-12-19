@@ -826,8 +826,8 @@ def method_ant(distmat, alpha=0.6, beta=0.65, pheEvaRate=0.3):
         plt.title(f"Итерация {iter}")
         # plt.show()
         iter += 1
-    return (min(length),antPath[length.index(min(length))] )
-
+    road = antPath[length.index(min(length))]
+    return (min(length), road + [road[0]])
 
 def TSP_SA(G):
     s = list(range(len(G))) 
