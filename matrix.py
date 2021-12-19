@@ -52,47 +52,82 @@ def matrixTranspose(anArray):
     return transposed
 
 
-def matrix(random=0, float_random=0, a=1, b=100):
-    m = input('Введите количество строк: ')
-
-    while m.isdigit() != 1:
-        print("Неверный формат ввода")
-        m = input('Введите количество строк: ')
-    n = input('Введите количество столбцов: ')
-
-    while n.isdigit() != 1:
-        print("Неверный формат ввода")
-        n = input('Введите количество столбцов: ')
-    m = int(m)
-    n = int(n)
-    matr = []
-    if random == 0:
-        for i in range(m):
-            t = []
-            for j in range(n):
-                _ = input(f'Введите элемент {i + 1} строки {j + 1} столбца: ')
-                while is_number(_) != 1:
-                    print("Неверный формат ввода")
+def matrix(random=0, float_random=0, a=1, b=100, square = False):
+    if square:
+        n = input('Введите размерность матрицы: ')
+        while n.isdigit() != 1:
+            print("Неверный формат ввода")
+            n = input('Введите размерность матрицы: ')
+        n = int(n)
+        matr = []
+        if random == 0:
+            for i in range(n):
+                t = []
+                for j in range(n):
                     _ = input(f'Введите элемент {i + 1} строки {j + 1} столбца: ')
-                try:
-                    t.append(float(_))
-                except ValueError:
+                    while is_number(_) != 1:
+                        print("Неверный формат ввода")
+                        _ = input(f'Введите элемент {i + 1} строки {j + 1} столбца: ')
                     try:
-                        t.append(complex(_))
+                        t.append(float(_))
                     except ValueError:
-                        None
-            matr.append(t)
+                        try:
+                            t.append(complex(_))
+                        except ValueError:
+                            None
+                matr.append(t)
+        else:
+            for i in range(n):
+                t = []
+                for j in range(n):
+                    if float_random == 1:
+                        _ = uniform(a, b)
+                        t.append(_)
+                    else:
+                        _ = randint(a, b)
+                        t.append(_)
+                matr.append(t)
     else:
-        for i in range(m):
-            t = []
-            for j in range(n):
-                if float_random == 1:
-                    _ = uniform(a, b)
-                    t.append(_)
-                else:
-                    _ = randint(a, b)
-                    t.append(_)
-            matr.append(t)
+        m = input('Введите количество строк: ')
+
+        while m.isdigit() != 1:
+            print("Неверный формат ввода")
+            m = input('Введите количество строк: ')
+        n = input('Введите количество столбцов: ')
+
+        while n.isdigit() != 1:
+            print("Неверный формат ввода")
+            n = input('Введите количество столбцов: ')
+        m = int(m)
+        n = int(n)
+        matr = []
+        if random == 0:
+            for i in range(m):
+                t = []
+                for j in range(n):
+                    _ = input(f'Введите элемент {i + 1} строки {j + 1} столбца: ')
+                    while is_number(_) != 1:
+                        print("Неверный формат ввода")
+                        _ = input(f'Введите элемент {i + 1} строки {j + 1} столбца: ')
+                    try:
+                        t.append(float(_))
+                    except ValueError:
+                        try:
+                            t.append(complex(_))
+                        except ValueError:
+                            None
+                matr.append(t)
+        else:
+            for i in range(m):
+                t = []
+                for j in range(n):
+                    if float_random == 1:
+                        _ = uniform(a, b)
+                        t.append(_)
+                    else:
+                        _ = randint(a, b)
+                        t.append(_)
+                matr.append(t)
 
     return matr
 
