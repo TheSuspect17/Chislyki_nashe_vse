@@ -2,9 +2,9 @@ import math
 import numpy as np
 import matplotlib.pyplot as plt
 from sympy import symbols, lambdify, sqrt, cos, sin, log, exp
-from matrix import *
 from scipy.integrate import odeint
 from math import sqrt, cos, sin, log, exp
+import time 
 
 n = 100
 
@@ -157,13 +157,13 @@ def diff_left_side(x, y):
 
 
 plt.style.use('ggplot')
-
+start_time = time.time()
 Input = input_function()
 qwe = euler(Input, n)
 X1 = []
 Y1 = []
 Z1 = []
-
+print(f"Время работы программы: {time.time() - start_time} секунд")
 for i in range(len(qwe)):
     X1.append(qwe[i][0])
     Y1.append(qwe[i][1])
@@ -237,7 +237,9 @@ if answer == '1':
     ax.set_title('Аппроксимация Ньютоном Эйлера')
     plt.show()
 
+start_time1 = time.time()
 qwe2 = euler_Koshi(Input, n)
+print(f"Время работы программы: {time.time() - start_time1} секунд")
 X2 = []
 Y2 = []
 Z2 = []
@@ -319,8 +321,9 @@ if answer == '1':
 x = []
 y = []
 z = []
-
+start_time2 = time.time()
 noname = rungekutta4(Input)
+print(f"Время работы программы: {time.time() - start_time2} секунд")
 for i in range(len(noname)):
     x.append(noname[i][1])
     y.append(noname[i][2])
@@ -420,7 +423,9 @@ a = int(input('Начало промежутка '))
 b = int(input('Конец промежутка '))
 x = np.linspace(a, b, n)
 
+start_time3 = time.time()
 y = odeint(Input[0], y0, x)
+print(f"Время работы программы: {time.time() - start_time3} секунд")
 if answer != '1':
     plt.plot(x, y, 'm', label='Стандартная функция y`')
     plt.legend(loc='best', prop={'size': 8}, frameon=False)
