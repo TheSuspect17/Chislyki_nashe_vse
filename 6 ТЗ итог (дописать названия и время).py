@@ -6,7 +6,7 @@ from matrix import *
 from scipy.integrate import odeint
 from math import sqrt, cos, sin, log, exp
 
-n = 170
+n = 100
 
 answer = '0'
 def input_function():
@@ -180,6 +180,7 @@ if answer == '1':
     fig = plt.figure()
     ax = fig.add_subplot(111, projection='3d')
     ax.scatter(X1, Y1, Z1)
+    ax.set_title('Эйлер')
     plt.show()
 
 noname1 = method_min_square(X1, Y1)
@@ -208,6 +209,7 @@ if answer == '1':
     fig = plt.figure()
     ax = fig.add_subplot(111, projection='3d')
     ax.scatter(x1_square, f1_square, f2_square)
+    ax.set_title('МНК Эйлера')
     plt.show()
 
 plt.show()
@@ -232,6 +234,7 @@ if answer == '1':
     fig = plt.figure()
     ax = fig.add_subplot(111, projection='3d')
     ax.scatter(x1_square, f1_square, f2_square)
+    ax.set_title('Аппроксимация Ньютоном Эйлера')
     plt.show()
 
 qwe2 = euler_Koshi(Input, n)
@@ -254,6 +257,7 @@ if answer == '1':
     fig = plt.figure()
     ax = fig.add_subplot(111, projection='3d')
     ax.scatter(X2, Y2, Z2)
+    ax.set_title('Эйлер-Коши')
     plt.show()
 
 noname1 = method_min_square(X2, Y2)
@@ -282,6 +286,7 @@ if answer == '1':
     fig = plt.figure()
     ax = fig.add_subplot(111, projection='3d')
     ax.scatter(x1_square, f1_square, f2_square)
+    ax.set_title('МНК Эйлера-Коши')
     plt.show()
 
 
@@ -307,6 +312,7 @@ if answer == '1':
     fig = plt.figure()
     ax = fig.add_subplot(111, projection='3d')
     ax.scatter(x1_square, f1_square, f2_square)
+    ax.set_title('Аппрокисмация Ньютоном Эйлера-Коши')
     plt.show()
 
 
@@ -330,6 +336,7 @@ if answer == '1':
     fig = plt.figure()
     ax = fig.add_subplot(111, projection='3d')
     ax.scatter(x, y, z)
+    ax.set_title('Метод Рунге-Кутты')
     plt.show()
 
 
@@ -351,13 +358,14 @@ for i in range(len(x)):
 
 if answer != '1':
     plt.plot(x_square, y_square, 'r', label=f'МНК y(t) c G = {gamma_y}')
-    plt.title("МНК")
+    plt.title("МНК Рунге-Кутты")
     plt.legend(loc='best', prop={'size': 8}, frameon=False)
     plt.show()
 if answer == '1':
     fig = plt.figure()
     ax = fig.add_subplot(111, projection='3d')
     ax.scatter(x_square, y_square, z_square)
+    ax.set_title('МНК Рунге-Кутты')
     plt.show()
 
 
@@ -374,13 +382,14 @@ for i in range(len(noname[1])):
         z_square.append(nonamez[1][i])
 if answer != '1':
     plt.plot(x1_square, f1_square, 'r', label=f'Ньютон y')
-    plt.title("Ньютон")
+    plt.title("Ньютон Рунге-Кутты")
     plt.legend(loc='best', prop={'size': 8}, frameon=False)
     plt.show()
 if answer == '1':
     fig = plt.figure()
     ax = fig.add_subplot(111, projection='3d')
     ax.scatter(x1_square, f1_square, z_square)
+    ax.set_title("Аппроксимация Ньютоном метода Рунге-Кутты")
     plt.show()
 
 
@@ -423,5 +432,6 @@ if answer == '1':
     fig = plt.figure()
     ax = fig.add_subplot(111, projection='3d')
     ax.scatter(x, y, z)
+    ax.set_title('Стандартная функция')
     plt.show()
 
