@@ -13,6 +13,23 @@ import networkx as nx
 import numpy.random as rnd
 import matplotlib.pyplot as plt
 
+def diff(Y,X,N):
+    S = 0.0
+    y2 = []
+    t = np.diff(Y)
+    for i in range(99):
+        S += 0.5 * (Y[i+1] - Y[i - 1]) / (X[i+1] - X[i-1])
+        y2.append(S)
+    return(X[0:99],t)
+
+def integral(f, xmin, xmax, n):
+    dx = (xmax - xmin) / n
+    z = 0
+    x = xmin
+    for i in range(n):
+        z = z + dx*(f(x)+f(x+dx))/2
+        x = x + dx
+    return z
 
 def is_number(str):
     try:
