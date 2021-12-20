@@ -12,6 +12,9 @@ import itertools
 import networkx as nx
 import numpy.random as rnd
 import matplotlib.pyplot as plt
+from sympy import symbols, lambdify, sqrt, cos, sin, log, exp
+from scipy.integrate import odeint
+import time 
 
 def diff(Y,X,N):
     S = 0.0
@@ -771,6 +774,155 @@ def aprox_st(xp,fp):
     plt.title('Апроксимация точек стандартной numpy')
     plt.show()
 
+n = 100
+
+answer = '0'
+def input_function():
+    global qwe654
+    qwe654 = input('Введите y` [доступные символы t,y,z]: ')
+    global answer
+    answer = input('Хотите ввести еще одно уравнение? [1/0] ')
+    function = []
+
+    def funct_1(y=0, t=0, z=0, qwe=qwe654):
+        dydt = eval(qwe654)
+        return dydt
+
+    function.append(funct_1)
+
+    if answer == '1':
+        global qwe456
+        qwe456 = input('Введите z` [доступные символы t,y,z]: ')
+
+        def funct_2(t=0, y=0, z=0, qwe=qwe456):
+            dydt = eval(qwe456)
+            return dydt
+
+        function.append(funct_2)
+    return function
+
+def euler(func, n=100):
+    """Решение ОДУ u'=f(y,x), начальное условие y(0) = U0 , c n шагами, пока  x = b - конец отрезка интегрирования."""
+    Y0 = float(input('Начальное условие, y0 = '))
+    a = float(input('Начало промежутка: '))
+    b = float(input('Конец промежутка: '))
+    if answer == '1':
+        Z0 = float(input('Начальное условие, z0 = '))
+    x = np.zeros(n + 1)
+    y = np.zeros(n + 1)
+    z = np.zeros(n + 1)
+    y[0] = Y0
+    if answer == '1':
+        z[0] = Z0
+    x[0] = a
+    output = [[0, Y0]]
+    dx = b / float(n)
+    if answer == '0':
+        for k in range(n):
+            x[k + 1] = x[k] + dx
+            y[k + 1] = y[k] + dx * func[0](t=x[k], y=y[k], z=0)
+            output.append([x[k], y[k]])
+        return output
+    if answer == '1':
+        output = [[0, Y0, Z0]]
+        for k in range(n):
+            x[k + 1] = x[k] + dx
+            y[k + 1] = y[k] + dx * func[0](t=x[k], z=z[k], y=0)
+            z[k + 1] = z[k] + dx * func[1](t=x[k], z=z[k], y=0)
+            output.append([x[k], y[k], z[k]])
+        return output
+
+
+def euler_Koshi(func, n=100):
+    """Решение ОДУ u'=f(y,x), начальное условие y(0) = U0 , c n шагами, пока  x = b - конец отрезка интегрирования."""
+    Y0 = float(input('Начальное условие, y0 = '))
+    a = float(input('Начало промежутка: '))
+    b = float(input('Конец промежутка: '))
+    if answer == '1':
+        Z0 = float(input('Начальное условие, z0 = '))
+    x = np.zeros(n + 1)
+    y = np.zeros(n + 1)
+    z = np.zeros(n + 1)
+    y[0] = Y0
+    if answer == '1':
+        z[0] = Z0
+    x[0] = a
+    output = [[0, Y0]]
+    dx = b / n
+    if answer == '0':
+        for k in range(n):
+            x[k + 1] = x[k] + dx
+            y[k + 1] = y[k] + dx * func[0](t=x[k], y=y[k], z=0)
+            y[k + 1] = y[k] + dx / 2 * (func[0](t=x[k], y=y[k], z=0) + func[0](t=x[k + 1], y=y[k + 1], z=0))
+            output.append([x[k], y[k]])
+        return output
+    if answer == '1':
+        output = [[0, Y0, Z0]]
+        for k in range(n):
+            x[k + 1] = x[k] + dx
+            y[k + 1] = y[k] + dx * func[0](t=x[k], y=y[k], z=z[k])
+            y[k + 1] = y[k] + dx / 2 * (func[0](t=x[k], y=y[k], z=0) + func[0](t=x[k + 1], y=y[k + 1], z=0))
+            z[k + 1] = z[k] + dx * func[1](t=x[k], z=z[k], y=0)
+            z[k + 1] = z[k] + dx / 2 * (func[1](t=x[k], z=z[k], y=0) + func[1](t=x[k + 1], z=z[k + 1], y=0))
+            output.append([x[k], y[k], z[k]])
+        return output
+
+
+def rungekutta4(function, n=100):
+    y0 = float(input('Начальное условие, y0 = '))
+    if answer == '1':
+        z0 = float(input('Начальное условие, z0 = '))
+        zn = z0
+    a = float(input('Начало промежутка: '))
+    b = float(input('Конец промежутка: '))
+    h = (b - a) / n
+    output = [[0, 0, y0]]
+    counter = 0
+    yn = y0
+    otrezok = []
+    for i in range(n):
+        a += h
+        otrezok.append(round(a, 5))
+    if answer == '0':
+        for i in otrezok:
+            counter += 1
+            k1 = function[0](i, yn, 1) * h
+            k2 = function[0](i + h / 2, yn + k1 / 2, 1) * h
+            k3 = function[0](i + h / 2, yn + k2 / 2, 1) * h
+            k4 = function[0](i + h, yn + k3, 1) * h
+            yn = yn + (1 / 6) * (k1 + 2 * k2 + 3 * k3 + k4)
+            output.append([counter, i, yn])
+        return output
+    elif answer == '1':
+        output = [[0, 0, y0, z0]]
+        for i in otrezok:
+            counter += 1
+            k1 = function[0](i, yn, zn) * h
+            m1 = function[1](i, yn, zn) * h
+
+            k2 = function[0](i + h / 2, yn + k1 / 2, zn + m1 / 2) * h
+            m2 = function[1](i + h / 2, yn + k1 / 2, zn + m1 / 2) * h
+
+            k3 = function[0](i + h / 2, yn + k2 / 2, zn + m2 / 2) * h
+            m3 = function[1](i + h / 2, yn + k2 / 2, zn + m2 / 2) * h
+
+            k4 = function[0](i + h, yn + k3, zn + m3) * h
+            m4 = function[1](i + h, yn + k3, zn + m3) * h
+
+            yn = yn + (1 / 6) * (k1 + 2 * k2 + 3 * k3 + k4)
+            zn = zn + (1 / 6) * (m1 + 2 * m2 + 3 * m3 + m4)
+            output.append([counter, i, yn, zn])
+        return output
+
+
+def diff_left_side(x, y):
+    h = x[1] - x[0]
+    dy = []
+    for i in range(1, len(x)):
+        dy.append((y[i] - y[i - 1]) / h)
+    return dy
+
+    
     
 def add_edge(f_item, s_item, graph=None):
     graph.add_edge(f_item, s_item)
