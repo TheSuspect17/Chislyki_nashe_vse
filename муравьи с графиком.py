@@ -973,7 +973,7 @@ def TSP(adj, N):
 
 
 N = int(input("Число вершин: "))
-adj = matrix()
+adj = matrix(random = 1, square= True)
 final_res = float('inf')
 final_path = [None] * (N + 1)
 visited = [False] * N
